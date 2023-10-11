@@ -150,6 +150,7 @@ def iterar_estacions(estacions: Estacions) ->Generator[Estacio, None, None]:
     return (estacio for estacio in estacions.llista_estacions)
 
 
+
 '''
 if __name__ == '__main__':
     """

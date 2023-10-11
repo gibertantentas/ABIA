@@ -26,6 +26,7 @@ class Estacio(object):
         self.demanda_next: int 
         self.diferencia: int
         self.excedent: int
+        self.distancies = List[int]
         
     def distancia_estacions(self, estacio: 'Estacio'):
         return abs(self.coordX - estacio.coordX) + abs(self.coordY - estacio.coordY)
@@ -54,6 +55,8 @@ class Estacions(object):
         self.rng: random.Random = random.Random(llavor)
         meitat_estacions: int = int(num_estacions / 2)
         self.llista_estacions: list[Estacio] = []
+        self.distancies: List[int]
+        
 
         for _ in range(meitat_estacions):
             est = Estacio(self.rng.randint(0, 99), self.rng.randint(0, 99))
@@ -106,6 +109,33 @@ class Estacions(object):
             else:
                 factor = -1
             est.demanda = media_bicicletas + factor * self.rng.randint(0, int(float(media_bicicletas) * 0.5) - 1)
+    '''
+    def __distancia_entre_estacions(self):
+        distancies = [[0] * n for _ in range(len(self.llista_estacions))]
+        for est1 in self.llista_estacions:
+            for est2 in self.llista_estacions:
+                dist = est1.distancia_estacions(est2)
+                distancies[est1.id][est2.id] = dist
+                distancies[est2.id][est1.id] = dist
+        self.distancies = distancies
+    '''
+    
+    def distancia_entre_estacions(self): #MODIFICACIÓ
+        ll = len(self.llista_estacions)
+        distancies = [[0] * ll for _ in range(ll)]
+        for i in range(ll):
+            for j in range(i, ll):
+                est1 = self.llista_estacions[i]
+                est2 = self.llista_estacions[j]
+                dist = est1.distancia_estacions(est2)
+                distancies[est1.id][est2.id] = dist
+                distancies[est2.id][est1.id] = dist
+        self.distancies = distancies
+        i = 0
+        for estacio in self.llista_estacions:
+            estacio.distancies = distancies[i]
+            i += 1
+        return distancies
 
 
 def genera_estacions(params: Parametres) -> Estacions:
@@ -149,55 +179,3 @@ def calcul_demanda(estacions: Estacions):
 def iterar_estacions(estacions: Estacions) ->Generator[Estacio, None, None]:
     return (estacio for estacio in estacions.llista_estacions)
 
-
-
-'''
-if __name__ == '__main__':
-    """
-    Prueba de funcionamiento:
-    Creación de una instancia de estaciones y escritura a consola de:
-    * Información de cada estacion
-    * Datos por estacion de bicicletas presentes, demandadas, diferencia y excedente
-    * Datos globales de bicicletas demandadas, disponibles para mover
-      y bicicletas que es necesario mover
-    """
-    estaciones = Estaciones(25, 1250, 42)
-    acum_bicicletas = 0
-    acum_demanda = 0
-    acum_disponibles = 0
-    acum_necesarias = 0
-    ###Modificat
-    llista_estacions = []
-    ###
-    
-    
-    print("Sta Cur Dem Dif Exc")
-    for id_estacion, estacion in enumerate(estaciones.lista_estaciones):
-        num_bicicletas_no_usadas = estacion.num_bicicletas_no_usadas
-        num_bicicletas_next = estacion.num_bicicletas_next
-        demanda = estacion.demanda
-        acum_bicicletas = acum_bicicletas + num_bicicletas_next
-        acum_demanda = acum_demanda + demanda
-        diferencia = num_bicicletas_next - demanda
-        if diferencia > 0:
-            if diferencia > num_bicicletas_no_usadas:
-                excedente = num_bicicletas_no_usadas
-            else:
-                excedente = diferencia
-            acum_disponibles = acum_disponibles + excedente
-        else:
-            excedente = 0
-            acum_necesarias = acum_necesarias - diferencia
-        llista_estacions.append(Estacio(id_estacion, estacion.coordX, estacion.coordY, num_bicicletas_no_usadas, num_bicicletas_next, demanda, diferencia, excedente))
-        print("est %2s = %2d %2d" % (id_estacion, estacion.coordX, estacion.coordY))
-        print("%3d %3d %3d %3d %3d" % (num_bicicletas_no_usadas, num_bicicletas_next, demanda, diferencia, excedente))
-
-    print("Bicis= %3d Demanda= %3d Disponibles= %3d Necesitan= %3d" %
-          (acum_bicicletas, acum_demanda, acum_disponibles, acum_necesarias))
-    ###
-    
-    
-  
-    
-
-'''

@@ -11,7 +11,16 @@ calcul_demanda(estacions) #És necessari executar-lo per calcular els ID i els e
 estat_inicial = genera_estat_inicial(estacions, params)
 
 print(estat_inicial.h())
+#print(estacions.distancies)
 
+s = estacions.distancia_entre_estacions()
+j = 0
+for i in s:
+    print(i ==  estacions.llista_estacions[j].distancies)
+    print(i, '\n ',estacions.llista_estacions[j].distancies)
+    
+    j += 1
+#print('\n', len(s))
 '''
 for furgo in estat_inicial.ruta:
     print(furgo.estacio_carrega.id, '\n')

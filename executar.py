@@ -5,30 +5,14 @@ from furgonetes import Furgonetes
 
 params = Parametres(25, 1250, 42, 10, 30)
 estacions = genera_estacions(params)
+acum_inicial = calcul_demanda(estacions) #Necessari executar per calcular els ID i els excedents, etc.
+                                        # acum_inicial contindra la suma de tots els excedents acum_bicicletes, acum_demanda, acum_disponibles, acum_necessaries
+estat_inicial = genera_estat_inicial(estacions, params) #Necessari executar per crear l'estat inicial
+estacions.distancia_entre_estacions() #Necessari executar per calcular les distàncies entre totes les estacions
 
-calcul_demanda(estacions) #És necessari executar-lo per calcular els ID i els excedents, etc.
-
-estat_inicial = genera_estat_inicial(estacions, params)
 
 print(estat_inicial.h())
-#print(estacions.distancies)
 
-s = estacions.distancia_entre_estacions()
-j = 0
-for i in s:
-    print(i ==  estacions.llista_estacions[j].distancies)
-    print(i, '\n ',estacions.llista_estacions[j].distancies)
-    
-    j += 1
-#print('\n', len(s))
-'''
-for furgo in estat_inicial.ruta:
-    print(furgo.estacio_carrega.id, '\n')
-'''
-
-    
-
-###Prova per saber si funciona el mètode per calcular la distància entre estacions: ----- print(estacions.llista_estacions[0].distancia_estacions(estacions.llista_estacions[1]))
 
 
 '''

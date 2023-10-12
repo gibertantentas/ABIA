@@ -109,16 +109,6 @@ class Estacions(object):
             else:
                 factor = -1
             est.demanda = media_bicicletas + factor * self.rng.randint(0, int(float(media_bicicletas) * 0.5) - 1)
-    '''
-    def __distancia_entre_estacions(self):
-        distancies = [[0] * n for _ in range(len(self.llista_estacions))]
-        for est1 in self.llista_estacions:
-            for est2 in self.llista_estacions:
-                dist = est1.distancia_estacions(est2)
-                distancies[est1.id][est2.id] = dist
-                distancies[est2.id][est1.id] = dist
-        self.distancies = distancies
-    '''
     
     def distancia_entre_estacions(self): #MODIFICACIÓ
         ll = len(self.llista_estacions)
@@ -135,7 +125,8 @@ class Estacions(object):
         for estacio in self.llista_estacions:
             estacio.distancies = distancies[i]
             i += 1
-        return distancies
+        
+    
 
 
 def genera_estacions(params: Parametres) -> Estacions:
@@ -172,7 +163,8 @@ def calcul_demanda(estacions: Estacions):
         estacio.demanda_next = demanda
         estacio.diferencia = diferencia
         estacio.excedent = excedent
-            
+     
+    return acum_bicicletes, acum_demanda, acum_disponibles, acum_necessaries      
     #print("Bicis= %3d Demanda= %3d Disponibles= %3d Necesitan= %3d" %
     #      (self.acum_bicicletas, self.acum_demanda, self.acum_disponibles, self.acum_necesarias))
 

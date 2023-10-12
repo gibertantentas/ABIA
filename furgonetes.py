@@ -13,7 +13,8 @@ class Furgonetes(object):
 
     def distancia_recorregut(self):        
         ################
-        '''NO CAL'''
+        '''NO CAL''' #Això sí, podríem fer un mètode amb aquesta mateixa utilitat aquest mètode perquè fes el càlcul del recorregut de la furgo i d'aquesta manera 
+                     #l'heurística de la classe estat simplement seria retornar el valor resultant d'aquest mètode
         ################
         dist = self.estacio_carrega.distancia_estacions(self.estacio_descarrega1)
         if self.estacio_descarrega2 != None:
@@ -24,4 +25,3 @@ class Furgonetes(object):
         return dist
         
         
-    

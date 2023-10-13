@@ -1,14 +1,13 @@
-from estacions import Estacio, Estacions, iterar_estacions
+from abia_bicing import Estacion, Estaciones
 from typing import List, Set, Generator
 from parametres import Parametres
-from operadors import Carrega, Descarrega
 from furgonetes import Furgonetes
+from distancies import Distancies
         
 
-def distancia_2_estacions():
-    pass
-    
-    
+
+
+
 class Estat():
     """
     Classe que representa un estat
@@ -41,34 +40,17 @@ class Estat():
                 cost_3 = km_3 * cost_km_3
                 cost_total += cost_1 + cost_3
         return cost_total
-    '''    
+    '''  
     def h(self):
-        #REVISAR EL PROBLEMA 15 I LES OPTIMITZACIONS APLICADES
-        cost_total = 0
-        for furgo in self.ruta:
-            cost_km_1 = ((furgo.carrega + 9) // 10)
-            km_1 = furgo.estacio_carrega.distancia_estacions(furgo.estacio_descarrega1)
-            cost_1 = km_1 * cost_km_1
-            if furgo.estacio_descarrega2 is not None:
-                cost_km_2 = (( (furgo.carrega - furgo.descarrega1) + 9) // 10)
-                km_2 = furgo.estacio_descarrega1.distancia_estacions(furgo.estacio_descarrega2)
-                cost_2 = km_2 * cost_km_2
-                cost_km_3 = (( (furgo.carrega - furgo.descarrega1 - furgo.descarrega2) + 9) // 10)
-                km_3 = furgo.estacio_descarrega2.distancia_estacions(furgo.estacio_carrega)
-                cost_3 = km_3 * cost_km_3
-                cost_total += cost_1 + cost_2 + cost_3
-            else:
-                cost_km_3 = (( (furgo.carrega - furgo.descarrega1 - furgo.descarrega2) + 9) // 10)
-                km_3 = furgo.estacio_descarrega2.distancia_estacions(furgo.estacio_carrega)
-                cost_3 = km_3 * cost_km_3
-                cost_total += cost_1 + cost_3
-        return cost_total
+        return sum(furgo.cost_gasolina() for furgo in self.ruta)
+    
+
     
     def __repr__(self):
         return f"Ruta: {self.ruta}"
         #return f"Parametres: n_estacions={self.params.n_estacions}, n_bicis={self.params.n_bicis}, llavor={self.params.llavor}, n_furgonetes={self.params.n_furgonetes}"   
         
-def genera_estat_inicial(estacions: Estacions, params: Parametres) -> Estat:
+def genera_estat_inicial(params: Parametres, estacions: Estaciones, distancies: Distancies) -> Estat:
     print('GENERANT ESTAT INICIAL...')
     iterador_est = iterar_estacions(estacions)
     ruta = []
@@ -76,8 +58,8 @@ def genera_estat_inicial(estacions: Estacions, params: Parametres) -> Estat:
         try:
             est_carrega = next(iterador_est)
             est_descarrega1 = next(iterador_est)
-            if est_carrega.num_bicicletes_no_usades < 30:
-                bicis_no_usades = est_carrega.num_bicicletes_no_usades
+            if est_carrega.num_bicicletas_no_usadas < 30:
+                bicis_no_usades = est_carrega.num_bicicletas_no_usadas
             else:
                 bicis_no_usades = 30
             carrega = bicis_no_usades
@@ -95,4 +77,14 @@ def genera_estat_inicial(estacions: Estacions, params: Parametres) -> Estat:
             #No hi ha més estacions
             break
 
-    return Estat(params, ruta) #Instància d'Estat
+    return Estat(params, ruta, distancies) #Instància d'Estat
+
+
+
+
+     
+
+
+def iterar_estacions(estacions: Estaciones) ->Generator[Estacion, None, None]:
+    return (estacio for estacio in estacions.lista_estaciones)
+

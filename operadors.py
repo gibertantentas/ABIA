@@ -1,4 +1,4 @@
-from estacions import Estacio
+from abia_bicing import Estacion, Estaciones
 
 
 ################
@@ -7,7 +7,7 @@ from estacions import Estacio
 
 
 class Carrega():
-    def __init__(self, estacio: Estacio, quantitat: int):
+    def __init__(self, estacio: Estacion, quantitat: int):
         self.estacio = estacio
         self.quantitat = quantitat
         #Fer que resti el nombre de bicis carregades a l'estacio
@@ -15,7 +15,7 @@ class Carrega():
         return f"Carrega {self.quantitat} bicis a l'estació {self.estacio.id}"
     
 class Descarrega():
-    def __init__(self, estacio: Estacio, quantitat: int):
+    def __init__(self, estacio: Estacion, quantitat: int):
         #(int,int,int,int,int,int,int,int)
         #Fer que sumi el nombre de bicis carregades a l'estacio
         self.estacio = estacio

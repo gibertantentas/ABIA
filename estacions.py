@@ -28,8 +28,7 @@ class Estacio(object):
         self.excedent: int
         self.distancies = List[int]
         
-    def distancia_estacions(self, estacio: 'Estacio'):
-        return abs(self.coordX - estacio.coordX) + abs(self.coordY - estacio.coordY)
+    
 
 
         
@@ -129,8 +128,7 @@ class Estacions(object):
     
 
 
-def genera_estacions(params: Parametres) -> Estacions:
-    return Estacions(params.n_estacions, params.n_bicis, params.llavor)
+
 
 def calcul_demanda(estacions: Estacions):
         
@@ -168,6 +166,5 @@ def calcul_demanda(estacions: Estacions):
     #print("Bicis= %3d Demanda= %3d Disponibles= %3d Necesitan= %3d" %
     #      (self.acum_bicicletas, self.acum_demanda, self.acum_disponibles, self.acum_necesarias))
 
-def iterar_estacions(estacions: Estacions) ->Generator[Estacio, None, None]:
-    return (estacio for estacio in estacions.llista_estacions)
+
 

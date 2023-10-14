@@ -20,8 +20,8 @@ class Estat(object):
 
     
     def genera_accions(self) -> Generator[Operador, None, None]:
-        quant_furgos = self.params.n_furgonetes
-        for num_furgo in quant_furgos:
+        quant_furgos = len(self.ruta)
+        for num_furgo in range(quant_furgos):
             for est_nova in self.estacions.lista_estaciones:
                 if est_nova not in self.estacions_de_carrega:
                     yield Modificar_estacio_carrega(num_furgo, est_nova)
@@ -35,9 +35,9 @@ class Estat(object):
             #yield Carrega_mes_bicicletes(num_furgo)
             #yield Carrega_menys_bicicletes(num_furgo)
             if self.ruta[num_furgo].estacio_descarrega1 is not None and self.ruta[num_furgo].carrega <= 30:
-                yield Descarrega_mes_bicicletes(self.ruta[num_furgo], 1)
+                yield Descarrega_mes_bicicletes(num_furgo, 1)
             if self.ruta[num_furgo].estacio_descarrega2 is not None and self.ruta[num_furgo].carrega <= 30:
-                yield Descarrega_mes_bicicletes(self.ruta[num_furgo], 2)
+                yield Descarrega_mes_bicicletes(num_furgo, 2)
 
     def comprova_ruta(self):
         for furgo in self.ruta:

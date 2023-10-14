@@ -1,4 +1,4 @@
-from typing import Generator
+'''from typing import Generator
 
 from aima.search import Problem
 
@@ -24,4 +24,4 @@ class ProblemaBICING(Problem):
             return -state.h()
 
     def goal_test(self, state: Estat) -> bool:
-        return False
+        return False'''

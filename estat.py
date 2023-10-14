@@ -56,7 +56,7 @@ class Estat(object):
 
 
     def aplica_operador(self, operador: Operador):
-        nou_estat = copia(self)
+        nou_estat = self.copia()
         if isinstance(operador, Modificar_estacio_carrega):
             nou_estat.ruta[operador.num_furgo].estacio_carrega = operador.est_nova
          

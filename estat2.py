@@ -1,4 +1,4 @@
-from estacions import Estacio, Estacions, iterar_estacions
+from abia_bicing import Estacion, Estaciones,
 from typing import List, Set, Generator
 from parametres import Parametres
 from operadors import Carrega, Descarrega
@@ -33,6 +33,7 @@ class Estat():
         print('GENERANT ESTAT INICIAL...')
         iterador_est = iterar_estacions(estacions)
         ruta = []
+        llista_ordenada = sorted(estaciones.lista_estaciones, key=lambda x: x.num_bicicletas_no_usadas, reverse=True)
 
 
         

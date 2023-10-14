@@ -1,4 +1,4 @@
-from abia_bicing import Estacion, Estaciones
+'''from abia_bicing import Estacion, Estaciones
 class Distancies():
     def __init__(self, estacions: Estaciones):
         self.num_estacions = len(estacions.lista_estaciones)
@@ -12,4 +12,4 @@ class Distancies():
                 self.distancies[est1.id][est2.id] = dist
                 self.distancies[est2.id][est1.id] = dist
     def distancia(self, est1: Estacion, est2: Estacion):
-        return self.distancies[est1.id][est2.id]
+        return self.distancies[est1.id][est2.id]'''

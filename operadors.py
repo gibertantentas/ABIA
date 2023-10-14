@@ -5,52 +5,51 @@ from furgonetes import Furgonetes
 class Operador():
     pass
 
-class Modificar_estacio_carrega(Operador):
-    def __init__(self, furgoneta: Furgonetes, est1: Estacion, est2:Estacion):
-        self.furgo = furgoneta
-        self.est1 = est1
-        self.est2 = est2
+class Modificar_estacio_carrega(Operador): #Dins de la classe ESTAT
+    def __init__(self, num_furgo: int, est_nova:Estacion):
+        self.num_furgo = num_furgo
+        self.est_nova = est_nova
     def __repr__(self):
-        return f"La furgo {self.furgo} ja no carregarà a {self.est1} sinó a {self.est2}"
+        return f"La furgo {self.num_furgo} modifica l'estació de càrrega a {self.est_nova}"
         
-class Carrega_mes_bicicletes(Operador):
-    def __init__(self, furgoneta: Furgonetes, bicicletes: int):
-        self.furgo = furgoneta
-        self.estacio_carrega = self.furgo.estacio_carrega
-        self.bicicletes = bicicletes
+class Carrega_mes_bicicletes(Operador): #Dins de la classe ESTAT
+    def __init__(self, num_furgo: int):
+        self.num_furgo = num_furgo
+        self.num_bicicletes = 5
     def __repr__(self):
-        return f"La furgo {self.furgo} modifica la seva càrrega en {self.bicicletes} bicicletes a l'estació {self.estacio_carrega}"
+        return f"La furgo {self.num_furgo} carregarà {self.num_bicicletes} bicicletes més a l'estació de càrrega"
 
-class Modificar_sentit_ruta(Operador):
-    def __init__(self, furgoneta: Furgonetes):
-        self.furgo = furgoneta
-        self.estacio_descarrega1 = self.furgo.estacio_descarrega1
-        self.estacio_descarrega2 = self.furgo.estacio_descarrega2
+class Carrega_menys_bicicletes(Operador): #Dins de la classe ESTAT
+    def __init__(self, num_furgo: int):
+        self.num_furgo = num_furgo
+        self.num_bicicletes = -5
     def __repr__(self):
-        return f"La furgo {self.furgo} modificarà el sentit de la ruta, anirà de {self.estacio_descarrega2} a {self.estacio_descarrega1}"
+        return f"La furgo {self.num_furgo} carregarà {self.num_bicicletes} bicicletes menys a l'estació de càrrega"
 
-
-class Eliminar_estacio_descarrega(Operador):
-    def __init__(self, furgoneta: Furgonetes):
-        self.furgo = furgoneta
-        if self.furgo.estacio_descarrega2 is not None:
-            self.estacio = self.furgo.estacio_descarrega2
-        else:
-            self.estacio = self.furgo.estacio_descarrega1
+class Modificar_sentit_ruta(Operador): #Dins de la classe ESTAT
+    def __init__(self, num_furgo: int):
+        self.num_furgo = num_furgo
     def __repr__(self):
-        return f"La furgo {self.furgo} ja no descarrega a l'estació {self.estacio}"
+        return f"La furgo {self.num_furgo} modificarà el sentit de la ruta de descàrrega"
+
+
+class Eliminar_estacio_descarrega(Operador): #Dins de la classe ESTAT
+    def __init__(self, num_furgo: int):
+        self.num_furgo = num_furgo
+    def __repr__(self):
+        return f"La furgo {self.num_furgo} elimina una estació de la seva ruta de descàrrega"
     
 class Descarrega_mes_bicicletes(Operador):
-    def __init__(self, furgoneta: Furgonetes, estacio: Estacion,bicicletes: int):
-        self.furgo = furgoneta
-        self.estacio_descarrega = estacio
-        self.bicicletes = bicicletes
+    def __init__(self, num_furgo: int, estacio_descarrega: int):
+        self.num_furgo = num_furgo
+        self.estacio_descarrega = estacio_descarrega
+        self.bicicletes = 5
     def __repr__(self):
-        return f"La furgo {self.furgo} modifica la seva descarrega en {self.bicicletes} bicicletes a l'estació {self.estacio_descarrega}"
+        return f"La furgo {self.num_furgo} modifica la seva descarrega en {self.bicicletes} bicicletes a l'estació de descàrrega {self.estacio_descarrega}"
     
-class Descarrega_en_nova_estacio(Operador):
-    def __init__(self, furgoneta: Furgonetes, estacio: Estacion):
-        self.furgo = furgoneta
+class Descarrega_en_nova_estacio(Operador): #Dins de la classe ESTAT
+    def __init__(self, num_furgo: int, estacio: Estacion):
+        self.num_furgo = num_furgo
         self.estacio_descarrega = estacio
     def __repr__(self):
-        return f"La furgo {self.furgo} afegeix l'estació {self.estacio_descarrega} a la seva ruta de descàrrega"
+        return f"La furgo {self.num_furgo} afegeix l'estació {self.estacio_descarrega} a la seva ruta de descàrrega"

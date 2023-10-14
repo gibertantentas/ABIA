@@ -28,4 +28,3 @@ print ( n . heuristic () ) # Valor de l’estat final
 
 
 '''
-

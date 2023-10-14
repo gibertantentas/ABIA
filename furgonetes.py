@@ -13,8 +13,10 @@ class Furgonetes(object):
         self.carrega: int = carrega
         self.descarrega1: int = descarrega1
         self.descarrega2: int = descarrega2
-        assert (est_descarrega1 is not None) or (descarrega1 == 0)
-        assert (est_descarrega2 is not None) or (descarrega2 == 0)
+        if est_descarrega1 is None:
+            assert (descarrega1 == 0)
+        if est_descarrega2 is None:
+            assert (descarrega2 == 0)
     
     def cost_gasolina(self):
         cost_total = 0
@@ -26,11 +28,11 @@ class Furgonetes(object):
         estacio_descarrega2 = self.estacio_descarrega2
 
         if estacio_descarrega1 is not None:
-            cost_1 = ((carrega + 9) // 10) * distancia_estacions(estacio_carrega, estacio_descarrega1)
+            cost_1 = ((carrega + 9) // 10) * (distancia_estacions(estacio_carrega, estacio_descarrega1) / 1000)
             cost_total += cost_1
             
             if estacio_descarrega2 is not None:
-                cost_2 = (((carrega - descarrega1) + 9) // 10) * distancia_estacions(estacio_descarrega1, estacio_descarrega2)
+                cost_2 = (((carrega - descarrega1) + 9) // 10) * (distancia_estacions(estacio_descarrega1, estacio_descarrega2) / 1000)
                 cost_total += cost_2
                 
         return cost_total

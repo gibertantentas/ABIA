@@ -17,22 +17,7 @@ class Estat(object):
         
     def copia(self):
         return Estat(self.params, self.ruta.copy(), self.estacions, self.estacions_de_carrega.copy())
-    def genera_accions(self) -> Generator[Operador, None, None]:
-        for furgo in self.ruta:
-            for est_nova in self.estacions.lista_estaciones:
-                if est_nova not in self.estacions_de_carrega:
-                    yield Modificar_estacio_carrega(furgo, est_nova)
-                yield Descarrega_en_nova_estacio(furgo, est_nova)
-            if furgo.estacio_descarrega1 is not None and furgo.estacio_descarrega2 is not None:
-                yield Modificar_sentit_ruta(furgo)
-            if furgo.estacio_descarrega1 is not None:
-                yield Eliminar_estacio_descarrega(furgo)
-            yield Carrega_mes_bicicletes(furgo)
-            yield Carrega_menys_bicicletes(furgo)
-            if furgo.estacio_descarrega1 is not None:
-                yield Descarrega_mes_bicicletes(furgo, furgo.estacio_descarrega1)
-            if furgo.estacio_descarrega2 is not None:
-                yield Descarrega_mes_bicicletes(furgo, furgo.estacio_descarrega2)
+
     
     def genera_accions(self) -> Generator[Operador, None, None]:
         quant_furgos = self.params.n_furgonetes
@@ -47,47 +32,83 @@ class Estat(object):
                 if self.ruta[num_furgo].estacio_descarrega2 is not None:
                     yield Modificar_sentit_ruta(num_furgo)
                 
-            yield Carrega_mes_bicicletes(num_furgo)
-            yield Carrega_menys_bicicletes(num_furgo)
-            if self.ruta[num_furgo].estacio_descarrega1 is not None:
-                yield Descarrega_mes_bicicletes(self.ruta[num_furgo], self.ruta[num_furgo].estacio_descarrega1)
-            if self.ruta[num_furgo].estacio_descarrega2 is not None:
-                yield Descarrega_mes_bicicletes(self.ruta[num_furgo], self.ruta[num_furgo].estacio_descarrega2)
+            #yield Carrega_mes_bicicletes(num_furgo)
+            #yield Carrega_menys_bicicletes(num_furgo)
+            if self.ruta[num_furgo].estacio_descarrega1 is not None and self.ruta[num_furgo].carrega <= 30:
+                yield Descarrega_mes_bicicletes(self.ruta[num_furgo], 1)
+            if self.ruta[num_furgo].estacio_descarrega2 is not None and self.ruta[num_furgo].carrega <= 30:
+                yield Descarrega_mes_bicicletes(self.ruta[num_furgo], 2)
 
-
+    def comprova_ruta(self):
+        for furgo in self.ruta:
+            if furgo.estacio_descarrega1 is None:
+                if furgo.estacio_descarrega2 is not None:
+                    furgo.estacio_descarrega1 = furgo.estacio_descarrega2
+                    furgo.descarrega1 = furgo.carrega
+                    furgo.estacio_descarrega2 = None
+                    furgo.descarrega2 = 0
+                else:
+                    furgo.descarrega1, furgo.descarrega2 = 0, 0
+            elif furgo.estacio_descarrega2 is None and furgo.descarrega2 != 0:
+                furgo.descarrega2 = 0
+                furgo.descarrega1 = furgo.carrega
+                    
+                return False
     def aplica_operador(self, operador: Operador):
         nou_estat = self.copia()
         if isinstance(operador, Modificar_estacio_carrega):
             nou_estat.ruta[operador.num_furgo].estacio_carrega = operador.est_nova
+            nou_estat.comprova_ruta()
+            '''
+            furgo = nou_estat.ruta[operador.num_furgo]
+            if operador.est_nova is furgo.estacio_descarrega1:
+                furgo.estacio_descarrega1 = furgo.estacio_descarrega2
+                furgo.descarrega1 = furgo.carrega
+                furgo.estacio_descarrega2 = None
+                furgo.descarrega2 = 0
+            elif operador.est_nova is furgo.estacio_descarrega2:
+                furgo.descarrega1 = furgo.carrega
+                furgo.estacio_descarrega2 = None
+                furgo.descarrega2 = 0
+            '''
          
-        elif isinstance(operador, Carrega_mes_bicicletes):
-            nou_estat.ruta[operador.num_furgo].carrega += operador.num_bicicletes
-           
-        elif isinstance(operador, Carrega_menys_bicicletes):
-            nou_estat.ruta[operador.num_furgo].carrega -= operador.num_bicicletes
         
+        #elif isinstance(operador, Carrega_mes_bicicletes):
+        #    nou_estat.ruta[operador.num_furgo].carrega += 1
+           
+        #elif isinstance(operador, Carrega_menys_bicicletes):
+        #    nou_estat.ruta[operador.num_furgo].carrega -= 1
+        
+
         elif isinstance(operador, Modificar_sentit_ruta):
             furgo = nou_estat.ruta[operador.num_furgo]
             furgo.estacio_descarrega1, furgo.estacio_descarrega2 = furgo.estacio_descarrega2, furgo.estacio_descarrega1
+            furgo.descarrega1, furgo.descarrega2 = furgo.descarrega2, furgo.descarrega1
         
         elif isinstance(operador, Eliminar_estacio_descarrega):
-            est_descarrega1 = nou_estat.ruta[operador.num_furgo].estacio_descarrega1
-            est_descarrega2 = nou_estat.ruta[operador.num_furgo].estacio_descarrega2
-            if est_descarrega2 is not None:
-                est_descarrega2.estacio_carrega = None
-                est_descarrega2.descarrega2 = 0
-            elif est_descarrega1 is not None:
-                est_descarrega1.estacio_carrega = None
-                est_descarrega2.descarrega1 = 0
-            
-         
+            furgo = nou_estat.ruta[operador.num_furgo]
+            if furgo.estacio_descarrega2 is not None:
+                furgo.estacio_descarrega2 = None
+                furgo.descarrega1 = furgo.carrega
+                furgo.descarrega2 = 0
+            elif furgo.estacio_descarrega1 is not None:
+                furgo.estacio_descarrega1 = None
+                furgo.descarrega1 = 0
         
         elif isinstance(operador, Descarrega_mes_bicicletes):
-            pass
+            if operador.estacio_descarrega == 1:
+                nou_estat.ruta[operador.num_furgo].descarrega1 += operador.num_bicicletes
+                nou_estat.ruta[operador.num_furgo].carrega += 1
+            elif operador.estacio_descarrega == 2:
+                nou_estat.ruta[operador.num_furgo].descarrega2 += operador.num_bicicletes
+                nou_estat.ruta[operador.num_furgo].carrega += 1
+                
         elif isinstance(operador, Descarrega_en_nova_estacio):
-            pass
-        else:
-            pass
+            furgo = nou_estat.ruta[operador.num_furgo]
+            if furgo.estacio_descarrega1 is None:
+                nou_estat.ruta[operador.num_furgo].estacio_descarrega1 = operador.estacio_descarrega
+            elif furgo.estacio_descarrega2 is None:
+                nou_estat.ruta[operador.num_furgo].estacio_descarrega2 = operador.estacio_descarrega
         
     def h(self):
         return sum(furgo.cost_gasolina() for furgo in self.ruta)

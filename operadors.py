@@ -15,16 +15,16 @@ class Modificar_estacio_carrega(Operador): #Dins de la classe ESTAT
 class Carrega_mes_bicicletes(Operador): #Dins de la classe ESTAT
     def __init__(self, num_furgo: int):
         self.num_furgo = num_furgo
-        self.num_bicicletes = 5
+        #self.num_bicicletes = 5
     def __repr__(self):
-        return f"La furgo {self.num_furgo} carregarà {self.num_bicicletes} bicicletes més a l'estació de càrrega"
+        return f"La furgo {self.num_furgo} carregarà més bicicletes a l'estació de càrrega"
 
 class Carrega_menys_bicicletes(Operador): #Dins de la classe ESTAT
     def __init__(self, num_furgo: int):
         self.num_furgo = num_furgo
-        self.num_bicicletes = -5
+        #self.num_bicicletes = -5
     def __repr__(self):
-        return f"La furgo {self.num_furgo} carregarà {self.num_bicicletes} bicicletes menys a l'estació de càrrega"
+        return f"La furgo {self.num_furgo} carregarà menys bicicletes a l'estació de càrrega"
 
 class Modificar_sentit_ruta(Operador): #Dins de la classe ESTAT
     def __init__(self, num_furgo: int):

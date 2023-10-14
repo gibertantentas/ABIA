@@ -2,6 +2,8 @@ from abia_bicing import Estacion, Estaciones
 from parametres import Parametres
 from estat import genera_estat_inicial
 from furgonetes import Furgonetes
+from aima.search import hill_climbing
+from Problema import ProblemaBICING
 #from distancies import Distancies
 
 
@@ -17,14 +19,9 @@ print(estat_inicial.h())
 
 
 
-
-'''
-
-n = hill_climbing ( BinPackingProblem ( initial_state ) )
+n = hill_climbing ( ProblemaBICING ( estat_inicial ) )
 print ( n ) # Estat final
-print ( n . heuristic () ) # Valor de l’estat final
+print ( n.h() ) # Valor de l’estat final
 
 
 
-
-'''

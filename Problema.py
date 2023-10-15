@@ -14,13 +14,16 @@ class ProblemaBICING(Problem):
         return state.genera_accions()
 
     def result(self, state: Estat, action: Operador) -> Estat:
+        print(action)
+        print(state.h())
         return state.aplica_operador(action)
 
     def value(self, state: Estat) -> float:
+        return state.h()
         if self.use_entropy:
-            return state.h_total()
+            return -state.h()
         else:
-            return state.h_total()
+            return -state.h()
 
     def goal_test(self, state: Estat) -> bool:
         return False

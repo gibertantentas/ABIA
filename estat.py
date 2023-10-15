@@ -9,14 +9,14 @@ class Estat(object):
     """
     Classe que representa un estat
     """
-    def __init__(self, parametres: Parametres,  ruta: List[Furgonetes], estacions: Estaciones, estacions_de_carrega: set):
+    def __init__(self, parametres: Parametres,  ruta: List[Furgonetes], estacions: Estaciones, estacions_de_carrega: set()):
         self.params = parametres
         self.ruta =  ruta
         self.estacions = estacions
         self.estacions_de_carrega = estacions_de_carrega
         
     def copia(self):
-        return Estat(self.params, self.ruta.copy(), self.estacions, self.estacions_de_carrega.copy())
+        return Estat(self.params, self.ruta.copy(), self.estacions, self.estacions_de_carrega )
 
     
     def genera_accions(self) -> Generator[Operador, None, None]:
@@ -24,7 +24,8 @@ class Estat(object):
         for num_furgo in range(quant_furgos):
             for est_nova in self.estacions.lista_estaciones:
                 if est_nova not in self.estacions_de_carrega:
-                    yield Modificar_estacio_carrega(num_furgo, est_nova)
+                    yield Carrega_en_nova_estacio(num_furgo, est_nova)
+                if self.ruta[num_furgo].carrega < 30:
                     yield Descarrega_en_nova_estacio(num_furgo, est_nova)
                 
             if self.ruta[num_furgo].estacio_descarrega1 is not None:
@@ -63,23 +64,22 @@ class Estat(object):
                 return False
     def aplica_operador(self, operador: Operador):
         nou_estat = self.copia()
-        if isinstance(operador, Modificar_estacio_carrega):
+        if isinstance(operador, Carrega_en_nova_estacio):
+            
+            nou_estat.estacions_de_carrega.add(operador.est_nova)
+            for est in nou_estat.estacions_de_carrega:
+                if est == nou_estat.ruta[operador.num_furgo].estacio_carrega:
+                    nou_estat.estacions_de_carrega.remove(est)
+                    break
+                
             nou_estat.ruta[operador.num_furgo].estacio_carrega = operador.est_nova
+            
             nou_estat.comprova_ruta()
-            '''
-            furgo = nou_estat.ruta[operador.num_furgo]
-            if operador.est_nova is furgo.estacio_descarrega1:
-                furgo.estacio_descarrega1 = furgo.estacio_descarrega2
-                furgo.descarrega1 = furgo.carrega
-                furgo.estacio_descarrega2 = None
-                furgo.descarrega2 = 0
-            elif operador.est_nova is furgo.estacio_descarrega2:
-                furgo.descarrega1 = furgo.carrega
-                furgo.estacio_descarrega2 = None
-                furgo.descarrega2 = 0
-            '''
+            
+
         
         elif isinstance(operador, Intercanviar_estacions):
+            pass
             if operador.est_intercanvi1 == 0 and operador.est_intercanvi2 == 0:
                 nou_estat.ruta[operador.num_furgo1].carrega, nou_estat.ruta[operador.num_furgo2].carrega = nou_estat.ruta[operador.num_furgo2].carrega, nou_estat.ruta[operador.num_furgo1].carrega
             
@@ -150,17 +150,15 @@ class Estat(object):
             furgo = nou_estat.ruta[operador.num_furgo]
             if furgo.estacio_descarrega1 is None:
                 nou_estat.ruta[operador.num_furgo].estacio_descarrega1 = operador.estacio_descarrega
+                nou_estat.ruta[operador.num_furgo].descarrega1 = 1
+                nou_estat.ruta[operador.num_furgo].carrega += 1
             elif furgo.estacio_descarrega2 is None:
                 nou_estat.ruta[operador.num_furgo].estacio_descarrega2 = operador.estacio_descarrega
+                nou_estat.ruta[operador.num_furgo].descarrega2 = 1
+                nou_estat.ruta[operador.num_furgo].carrega += 1
         return nou_estat
-    '''def h(self):
-        return sum(furgo.cost_gasolina() for furgo in self.ruta)
-    
-    def h2(self):
-        guanys = sum(furgo.guanys() for furgo in self.ruta)
-        perdues = sum(furgo.perdues() for furgo in self.ruta)
-        return guanys - perdues'''
-    def h_total(self):
+
+    def h(self):
         cost_gasolina = sum(furgo.cost_gasolina() for furgo in self.ruta)
         guanys = sum(furgo.guanys() for furgo in self.ruta)
         perdues = sum(furgo.perdues() for furgo in self.ruta)
@@ -182,6 +180,45 @@ class Estat(object):
         return hash((self.params, tuple(self.ruta), self.estacions, frozenset(self.estacions_de_carrega)))'''
 
 def genera_estat_inicial(params: Parametres, estacions: Estaciones) -> Estat:
+    iterador_est = iterar_estacions(estacions)
+    ruta = []
+    estacions_de_carrega = set()
+    
+    for i in range(params.n_furgonetes):
+        est_carrega = next(iterador_est)
+        estacions_de_carrega.add(est_carrega)
+        carrega = est_carrega.num_bicicletas_no_usadas
+        est_descarrega1 = next(iterador_est)
+        descarrega1 = carrega
+        ruta.append(Furgonetes(est_carrega, carrega))
+    '''while True:
+        try:
+            est_carrega = next(iterador_est)
+            estacions_de_carrega.add(est_carrega)
+            est_descarrega1 = next(iterador_est)
+            if est_carrega.num_bicicletas_no_usadas < 30:
+                bicis_no_usades = est_carrega.num_bicicletas_no_usadas
+            else:
+                bicis_no_usades = 30
+            carrega = bicis_no_usades
+
+            try:
+                est_descarrega2 = next(iterador_est)
+                descarrega1 = bicis_no_usades // 2
+                descarrega2 = bicis_no_usades - (bicis_no_usades // 2) 
+                ruta.append(Furgonetes(est_carrega, carrega, est_descarrega1, descarrega1, est_descarrega2, descarrega2))
+            except:
+                descarrega1 = bicis_no_usades
+                ruta.append(Furgonetes(est_carrega, carrega, est_descarrega1, descarrega1))
+
+        except StopIteration:
+            #No hi ha més estacions
+            break'''
+
+    return Estat(params, ruta, estacions, estacions_de_carrega) #Instància d'Estat
+
+
+'''def genera_estat_inicial(params: Parametres, estacions: Estaciones) -> Estat:
     iterador_est = iterar_estacions(estacions)
     ruta = []
     estacions_de_carrega = set()
@@ -209,7 +246,7 @@ def genera_estat_inicial(params: Parametres, estacions: Estaciones) -> Estat:
             #No hi ha més estacions
             break
 
-    return Estat(params, ruta, estacions, estacions_de_carrega) #Instància d'Estat
+    return Estat(params, ruta, estacions, estacions_de_carrega) #Instància d'Estat'''
 
 
 
@@ -251,7 +288,7 @@ def genera_estat_inicial2(params: Parametres, estaciones: Estaciones) -> Estat:
                 descarrega2 = min((carrega - descarrega), carrega)
                 
             ruta.append(Furgonetes(est_carrega, carrega, est_descarrega_propera, descarrega, est_descarrega2_propera, descarrega2))
-    return Estat(params, ruta, estaciones, estacions_carrega)
+    return Estat(params, ruta, estaciones, set(estacions_carrega))
 
 
      

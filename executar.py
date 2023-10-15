@@ -49,6 +49,12 @@ n = hill_climbing(ProblemaBICING(estat_inicial))
 for furgo in n.ruta:
     print('FURGO')
     print (furgo.carrega, furgo.descarrega1, furgo.descarrega2)
-
-    print(furgo.estacio_descarrega1.num_bicicletas_next - furgo.estacio_descarrega1.demanda)
-print ( n.h_total() ) # Valor de l’estat final
+    try:
+        try:
+            print(furgo.estacio_descarrega1.num_bicicletas_next - furgo.estacio_descarrega1.demanda, furgo.estacio_descarrega2.num_bicicletas_next - furgo.estacio_descarrega2.demanda)
+        except:
+            pass
+        print(furgo.estacio_descarrega1.num_bicicletas_next - furgo.estacio_descarrega1.demanda)
+    except:
+        pass
+print ( n.h() ) # Valor de l’estat final

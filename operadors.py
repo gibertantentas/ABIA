@@ -72,5 +72,8 @@ class Descarrega_en_nova_estacio(Operador): #Dins de la classe ESTAT
     def __repr__(self):
         return f"La furgo {self.num_furgo} afegeix l'estació {self.estacio_descarrega.coordX}, {self.estacio_descarrega.coordY} a la seva ruta de descàrrega"
 
-#class Intercanviar_bicicletes(Operador):
-    #Es tractaria de intercanviar els bicicletes entre l'estació de descàrrega 1 i la 2
+class Intercanviar_bicicletes(Operador):
+    def __init__(self, num_furgo : int):
+        self.num_furgo = num_furgo
+    def __repr__(self):
+        return f"La furgo {self.num_furgo} intercanvia les bicicletes descarregades"

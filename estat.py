@@ -22,6 +22,7 @@ class Estat(object):
     def genera_accions(self) -> Generator[Operador, None, None]:
         quant_furgos = len(self.ruta)
         for num_furgo in range(quant_furgos):
+            2#yield Intercanviar_bicicletes(num_furgo)
             for est_nova in self.estacions.lista_estaciones:
                 if est_nova not in self.estacions_de_carrega:
                     yield Carrega_en_nova_estacio(num_furgo, est_nova)
@@ -156,6 +157,8 @@ class Estat(object):
                 nou_estat.ruta[operador.num_furgo].estacio_descarrega2 = operador.estacio_descarrega
                 nou_estat.ruta[operador.num_furgo].descarrega2 = 1
                 nou_estat.ruta[operador.num_furgo].carrega += 1
+        elif isinstance(operador, Intercanviar_bicicletes):
+            nou_estat.ruta[operador.num_furgo].descarrega1, nou_estat.ruta[operador.num_furgo].descarrega2 = nou_estat.ruta[operador.num_furgo].descarrega2, nou_estat.ruta[operador.num_furgo].descarrega1
         return nou_estat
 
     def h(self):

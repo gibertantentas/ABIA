@@ -132,19 +132,19 @@ class Estat(object):
         
         elif isinstance(operador, Descarrega_mes_bicicletes):
             if operador.estacio_descarrega == 1:
-                nou_estat.ruta[operador.num_furgo].descarrega1 += operador.num_bicicletes
-                nou_estat.ruta[operador.num_furgo].carrega += operador.num_bicicletes
+                nou_estat.ruta[operador.num_furgo].descarrega1 += operador.bicicletes
+                nou_estat.ruta[operador.num_furgo].carrega += operador.bicicletes
             elif operador.estacio_descarrega == 2:
-                nou_estat.ruta[operador.num_furgo].descarrega2 += operador.num_bicicletes
-                nou_estat.ruta[operador.num_furgo].carrega += operador.num_bicicletes
+                nou_estat.ruta[operador.num_furgo].descarrega2 += operador.bicicletes
+                nou_estat.ruta[operador.num_furgo].carrega += operador.bicicletes
         
         elif isinstance(operador, Descarrega_menys_bicicletes):
             if operador.estacio_descarrega == 1:
-                nou_estat.ruta[operador.num_furgo].descarrega1 -= operador.num_bicicletes
-                nou_estat.ruta[operador.num_furgo].carrega -= operador.num_bicicletes
+                nou_estat.ruta[operador.num_furgo].descarrega1 -= operador.bicicletes
+                nou_estat.ruta[operador.num_furgo].carrega -= operador.bicicletes
             elif operador.estacio_descarrega == 2:
-                nou_estat.ruta[operador.num_furgo].descarrega2 -= operador.num_bicicletes
-                nou_estat.ruta[operador.num_furgo].carrega -= operador.num_bicicletes
+                nou_estat.ruta[operador.num_furgo].descarrega2 -= operador.bicicletes
+                nou_estat.ruta[operador.num_furgo].carrega -= operador.bicicletes
                 
         elif isinstance(operador, Descarrega_en_nova_estacio):
             furgo = nou_estat.ruta[operador.num_furgo]
@@ -152,14 +152,19 @@ class Estat(object):
                 nou_estat.ruta[operador.num_furgo].estacio_descarrega1 = operador.estacio_descarrega
             elif furgo.estacio_descarrega2 is None:
                 nou_estat.ruta[operador.num_furgo].estacio_descarrega2 = operador.estacio_descarrega
-        
-    def h(self):
+        return nou_estat
+    '''def h(self):
         return sum(furgo.cost_gasolina() for furgo in self.ruta)
     
     def h2(self):
         guanys = sum(furgo.guanys() for furgo in self.ruta)
         perdues = sum(furgo.perdues() for furgo in self.ruta)
-        return guanys - perdues
+        return guanys - perdues'''
+    def h_total(self):
+        cost_gasolina = sum(furgo.cost_gasolina() for furgo in self.ruta)
+        guanys = sum(furgo.guanys() for furgo in self.ruta)
+        perdues = sum(furgo.perdues() for furgo in self.ruta)
+        return guanys - perdues - cost_gasolina
     def __repr__(self):
         return f"Ruta: {self.ruta}"
         #return f"Parametres: n_estacions={self.params.n_estacions}, n_bicis={self.params.n_bicis}, llavor={self.params.llavor}, n_furgonetes={self.params.n_furgonetes}"   

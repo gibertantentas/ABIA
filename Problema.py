@@ -18,9 +18,9 @@ class ProblemaBICING(Problem):
 
     def value(self, state: Estat) -> float:
         if self.use_entropy:
-            return -state.h()
+            return state.h_total()
         else:
-            return -state.h()
+            return state.h_total()
 
     def goal_test(self, state: Estat) -> bool:
         return False

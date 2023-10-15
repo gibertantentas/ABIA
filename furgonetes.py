@@ -64,3 +64,5 @@ class Furgonetes(object):
             if sobrants < carrega:
                 perdues += carrega-sobrants
         return perdues
+    def __repr__(self):
+        return f"Furgonetes({self.estacio_carrega}, {self.carrega}, {self.estacio_descarrega1}, {self.descarrega1}, {self.estacio_descarrega2}, {self.descarrega2})"

@@ -56,6 +56,25 @@
     return Estat(params, ruta, estacions, estacions_de_carrega) #Instància d'Estat'''
     
     
+     def __eq__(self, other):
+        if isinstance(other, Estat):
+            return (self.params == other.params and
+                    self.ruta == other.ruta and
+                    self.estacions == other.estacions and
+                    self.estacions_de_carrega == other.estacions_de_carrega)
+        return False
+
+    def __hash__(self):
+        return hash((self.params, tuple(self.ruta), self.estacions, frozenset(self.estacions_de_carrega)))
+    
+    
+    
+    
+    
+    
+       
+    
+    
     
     
 CODI 'Executar.py':

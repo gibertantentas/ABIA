@@ -3,6 +3,8 @@ from typing import List, Set, Generator
 from parametres import Parametres
 from furgonetes import Furgonetes
 from operadors import *
+import copy
+
 
         
 class Estat(object):
@@ -15,8 +17,17 @@ class Estat(object):
         self.estacions = estacions
         self.estacions_de_carrega = estacions_de_carrega
         
+    '''def copia(self):
+        return Estat(self.params, self.ruta.copy(), self.estacions, self.estacions_de_carrega )'''
     def copia(self):
-        return Estat(self.params, self.ruta.copy(), self.estacions, self.estacions_de_carrega )
+        return copy.deepcopy(self)
+        # Crea una nueva instancia de Estat con los mismos valores de atributos
+
+        ruta_copia = [copy.copy(furgo) for furgo in self.ruta]
+        #return copia
+        copia = Estat(self.params, ruta_copia, self.estacions, copy.copy(self.estacions_de_carrega))
+        return copia
+
 
     
     def genera_accions(self) -> Generator[Operador, None, None]:
@@ -86,7 +97,18 @@ class Estat(object):
                 
             nou_estat.ruta[operador.num_furgo].estacio_carrega = operador.est_nova
             
-            nou_estat.comprova_ruta()
+            for furgo in nou_estat.ruta:
+                if furgo.estacio_descarrega1 is None:
+                    if furgo.estacio_descarrega2 is not None:
+                        furgo.estacio_descarrega1 = furgo.estacio_descarrega2
+                        furgo.descarrega1 = furgo.carrega
+                        furgo.estacio_descarrega2 = None
+                        furgo.descarrega2 = 0
+                    else:
+                        furgo.descarrega1, furgo.descarrega2 = 0, 0
+                elif furgo.estacio_descarrega2 is None and furgo.descarrega2 != 0:
+                    furgo.descarrega2 = 0
+                    furgo.descarrega1 = furgo.carrega
             
 
         
@@ -119,9 +141,6 @@ class Estat(object):
             elif operador.est_intercanvi1 == 2 and operador.est_intercanvi2 == 2:
                 nou_estat.ruta[operador.num_furgo1].estacio_descarrega2, nou_estat.ruta[operador.num_furgo2].estacio_descarrega2 = nou_estat.ruta[operador.num_furgo2].estacio_descarrega2, nou_estat.ruta[operador.num_furgo1].estacio_descarrega2
 
-            
-        #elif isinstance(operador, Carrega_mes_bicicletes):
-        #    nou_estat.ruta[operador.num_furgo].carrega += 1
            
         elif isinstance(operador, Carrega_menys_bicicletes):
             nou_estat.ruta[operador.num_furgo].carrega -= 1
@@ -187,16 +206,7 @@ class Estat(object):
         #return f"Parametres: n_estacions={self.params.n_estacions}, n_bicis={self.params.n_bicis}, llavor={self.params.llavor}, n_furgonetes={self.params.n_furgonetes}"   
     
     #Per implementar ruta com a Set
-    '''def __eq__(self, other):
-        if isinstance(other, Estat):
-            return (self.params == other.params and
-                    self.ruta == other.ruta and
-                    self.estacions == other.estacions and
-                    self.estacions_de_carrega == other.estacions_de_carrega)
-        return False
 
-    def __hash__(self):
-        return hash((self.params, tuple(self.ruta), self.estacions, frozenset(self.estacions_de_carrega)))'''
 
 def genera_estat_inicial(params: Parametres, estacions: Estaciones) -> Estat:
     iterador_est = iterar_estacions(estacions)

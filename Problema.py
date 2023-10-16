@@ -18,10 +18,10 @@ class ProblemaBICING(Problem):
             furgo = state.ruta[action.num_furgo]
         except:
             furgo = state.ruta[action.num_furgo1]
-        print('\n')
+        '''print('\n')
         print(action)
         print (furgo.carrega, furgo.descarrega1, furgo.descarrega2)
-        print(state.h())
+        print(state.h())'''
         return state.aplica_operador(action)
 
     def value(self, state: Estat) -> float:

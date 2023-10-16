@@ -14,16 +14,19 @@ class ProblemaBICING(Problem):
         return state.genera_accions()
 
     def result(self, state: Estat, action: Operador) -> Estat:
+        try:
+            furgo = state.ruta[action.num_furgo]
+        except:
+            furgo = state.ruta[action.num_furgo1]
+        print('\n')
         print(action)
+        print (furgo.carrega, furgo.descarrega1, furgo.descarrega2)
         print(state.h())
         return state.aplica_operador(action)
 
     def value(self, state: Estat) -> float:
         return state.h()
-        if self.use_entropy:
-            return -state.h()
-        else:
-            return -state.h()
+
 
     def goal_test(self, state: Estat) -> bool:
         return False

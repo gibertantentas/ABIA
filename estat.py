@@ -22,31 +22,42 @@ class Estat(object):
     def genera_accions(self) -> Generator[Operador, None, None]:
         quant_furgos = len(self.ruta)
         for num_furgo in range(quant_furgos):
-            2#yield Intercanviar_bicicletes(num_furgo)
-            for est_nova in self.estacions.lista_estaciones:
-                if est_nova not in self.estacions_de_carrega:
-                    yield Carrega_en_nova_estacio(num_furgo, est_nova)
-                if self.ruta[num_furgo].carrega < 30:
-                    yield Descarrega_en_nova_estacio(num_furgo, est_nova)
-                
-            if self.ruta[num_furgo].estacio_descarrega1 is not None:
-                yield Eliminar_estacio_descarrega(num_furgo)
-                if self.ruta[num_furgo].estacio_descarrega2 is not None:
-                    yield Modificar_sentit_ruta(num_furgo)
-                
-            #yield Carrega_mes_bicicletes(num_furgo)
-            #yield Carrega_menys_bicicletes(num_furgo)
-            if self.ruta[num_furgo].estacio_descarrega1 is not None and self.ruta[num_furgo].carrega <= 30:
-                yield Descarrega_mes_bicicletes(num_furgo, 1)
-                yield Descarrega_menys_bicicletes(num_furgo, 1)
-            if self.ruta[num_furgo].estacio_descarrega2 is not None and self.ruta[num_furgo].carrega <= 30:
-                yield Descarrega_mes_bicicletes(num_furgo, 2)
-                yield Descarrega_menys_bicicletes(num_furgo, 2)
+            
             for num_furgo2 in range(num_furgo + 1, quant_furgos):
                 if num_furgo != num_furgo2:
                     for i in range(2):
                         for j in range(2):
                             yield Intercanviar_estacions(num_furgo, num_furgo2, i, j)
+        
+
+            if self.ruta[num_furgo].estacio_descarrega1 is not None and self.ruta[num_furgo].carrega <= 30:
+                yield Descarrega_mes_bicicletes(num_furgo, 1)
+                yield Descarrega_menys_bicicletes(num_furgo, 1)
+
+            if self.ruta[num_furgo].estacio_descarrega2 is not None and self.ruta[num_furgo].carrega <= 30:
+                yield Descarrega_mes_bicicletes(num_furgo, 2)
+                yield Descarrega_menys_bicicletes(num_furgo, 2)
+            
+
+            yield Eliminar_estacio_descarrega(num_furgo)
+            if self.ruta[num_furgo].estacio_descarrega2 is not None:
+                yield Modificar_sentit_ruta(num_furgo)
+            
+            if self.ruta[num_furgo].descarrega1 > 0:
+                yield Intercanviar_bicicletes(num_furgo,2) #Estació 1 dóna a estació 2
+            if self.ruta[num_furgo].descarrega2 > 0:
+                yield Intercanviar_bicicletes(num_furgo,1) #Estacio 2 dóna a estació 1
+            if self.ruta[num_furgo].carrega > self.ruta[num_furgo].descarrega1 + self.ruta[num_furgo].descarrega2:
+                yield Carrega_menys_bicicletes(num_furgo)
+            for est_nova in self.estacions.lista_estaciones:
+                if est_nova not in self.estacions_de_carrega:
+                    yield Carrega_en_nova_estacio(num_furgo, est_nova)
+                    
+                if self.ruta[num_furgo].carrega < 30:
+                    yield Descarrega_en_nova_estacio(num_furgo, est_nova)
+                
+
+            
 
     def comprova_ruta(self):
         for furgo in self.ruta:
@@ -82,38 +93,38 @@ class Estat(object):
         elif isinstance(operador, Intercanviar_estacions):
             pass
             if operador.est_intercanvi1 == 0 and operador.est_intercanvi2 == 0:
-                nou_estat.ruta[operador.num_furgo1].carrega, nou_estat.ruta[operador.num_furgo2].carrega = nou_estat.ruta[operador.num_furgo2].carrega, nou_estat.ruta[operador.num_furgo1].carrega
+                nou_estat.ruta[operador.num_furgo1].estacio_carrega, nou_estat.ruta[operador.num_furgo2].estacio_carrega = nou_estat.ruta[operador.num_furgo2].estacio_carrega, nou_estat.ruta[operador.num_furgo1].estacio_carrega
             
             elif operador.est_intercanvi1 == 0 and operador.est_intercanvi2 == 1:
-                nou_estat.ruta[operador.num_furgo1].carrega, nou_estat.ruta[operador.num_furgo2].descarrega1 = nou_estat.ruta[operador.num_furgo2].descarrega1, nou_estat.ruta[operador.num_furgo1].carrega
+                nou_estat.ruta[operador.num_furgo1].estacio_carrega, nou_estat.ruta[operador.num_furgo2].estacio_descarrega1 = nou_estat.ruta[operador.num_furgo2].estacio_descarrega1, nou_estat.ruta[operador.num_furgo1].estacio_carrega
             
             elif operador.est_intercanvi1 == 0 and operador.est_intercanvi2 == 2:
-                nou_estat.ruta[operador.num_furgo1].carrega, nou_estat.ruta[operador.num_furgo2].descarrega2 = nou_estat.ruta[operador.num_furgo2].descarrega2, nou_estat.ruta[operador.num_furgo1].carrega
+                nou_estat.ruta[operador.num_furgo1].estacio_carrega, nou_estat.ruta[operador.num_furgo2].estacio_descarrega2 = nou_estat.ruta[operador.num_furgo2].estacio_descarrega2, nou_estat.ruta[operador.num_furgo1].estacio_carrega
             
             elif operador.est_intercanvi1 == 1 and operador.est_intercanvi2 == 0:
-                nou_estat.ruta[operador.num_furgo1].descarrega1, nou_estat.ruta[operador.num_furgo2].carrega = nou_estat.ruta[operador.num_furgo2].carrega, nou_estat.ruta[operador.num_furgo1].descarrega1
+                nou_estat.ruta[operador.num_furgo1].estacio_descarrega1, nou_estat.ruta[operador.num_furgo2].estacio_carrega = nou_estat.ruta[operador.num_furgo2].estacio_carrega, nou_estat.ruta[operador.num_furgo1].estacio_descarrega1
             
             elif operador.est_intercanvi1 == 1 and operador.est_intercanvi2 == 1:
-                nou_estat.ruta[operador.num_furgo1].descarrega1, nou_estat.ruta[operador.num_furgo2].descarrega1 = nou_estat.ruta[operador.num_furgo2].descarrega1, nou_estat.ruta[operador.num_furgo1].descarrega1
+                nou_estat.ruta[operador.num_furgo1].estacio_descarrega1, nou_estat.ruta[operador.num_furgo2].estacio_descarrega1 = nou_estat.ruta[operador.num_furgo2].estacio_descarrega1, nou_estat.ruta[operador.num_furgo1].estacio_descarrega1
             
             elif operador.est_intercanvi1 == 1 and operador.est_intercanvi2 == 2:
-                nou_estat.ruta[operador.num_furgo1].descarrega1, nou_estat.ruta[operador.num_furgo2].descarrega2 = nou_estat.ruta[operador.num_furgo2].descarrega2, nou_estat.ruta[operador.num_furgo1].descarrega1
+                nou_estat.ruta[operador.num_furgo1].estacio_descarrega1, nou_estat.ruta[operador.num_furgo2].estacio_descarrega2 = nou_estat.ruta[operador.num_furgo2].estacio_descarrega2, nou_estat.ruta[operador.num_furgo1].estacio_descarrega1
             
             elif operador.est_intercanvi1 == 2 and operador.est_intercanvi2 == 0:
-                nou_estat.ruta[operador.num_furgo1].descarrega2, nou_estat.ruta[operador.num_furgo2].carrega = nou_estat.ruta[operador.num_furgo2].carrega, nou_estat.ruta[operador.num_furgo1].descarrega2
+                nou_estat.ruta[operador.num_furgo1].estacio_descarrega2, nou_estat.ruta[operador.num_furgo2].estacio_carrega = nou_estat.ruta[operador.num_furgo2].estacio_carrega, nou_estat.ruta[operador.num_furgo1].estacio_descarrega2
             
             elif operador.est_intercanvi1 == 2 and operador.est_intercanvi2 == 1:
-                nou_estat.ruta[operador.num_furgo1].descarrega2, nou_estat.ruta[operador.num_furgo2].descarrega1 = nou_estat.ruta[operador.num_furgo2].descarrega1, nou_estat.ruta[operador.num_furgo1].descarrega2
+                nou_estat.ruta[operador.num_furgo1].estacio_descarrega2, nou_estat.ruta[operador.num_furgo2].estacio_descarrega1 = nou_estat.ruta[operador.num_furgo2].estacio_descarrega1, nou_estat.ruta[operador.num_furgo1].estacio_descarrega2
             
             elif operador.est_intercanvi1 == 2 and operador.est_intercanvi2 == 2:
-                nou_estat.ruta[operador.num_furgo1].descarrega2, nou_estat.ruta[operador.num_furgo2].descarrega2 = nou_estat.ruta[operador.num_furgo2].descarrega2, nou_estat.ruta[operador.num_furgo1].descarrega2
+                nou_estat.ruta[operador.num_furgo1].estacio_descarrega2, nou_estat.ruta[operador.num_furgo2].estacio_descarrega2 = nou_estat.ruta[operador.num_furgo2].estacio_descarrega2, nou_estat.ruta[operador.num_furgo1].estacio_descarrega2
 
             
         #elif isinstance(operador, Carrega_mes_bicicletes):
         #    nou_estat.ruta[operador.num_furgo].carrega += 1
            
-        #elif isinstance(operador, Carrega_menys_bicicletes):
-        #    nou_estat.ruta[operador.num_furgo].carrega -= 1
+        elif isinstance(operador, Carrega_menys_bicicletes):
+            nou_estat.ruta[operador.num_furgo].carrega -= 1
         
 
         elif isinstance(operador, Modificar_sentit_ruta):
@@ -125,9 +136,9 @@ class Estat(object):
             furgo = nou_estat.ruta[operador.num_furgo]
             if furgo.estacio_descarrega2 is not None:
                 furgo.estacio_descarrega2 = None
-                furgo.descarrega1 = furgo.carrega
+                furgo.descarrega1 += furgo.descarrega2
                 furgo.descarrega2 = 0
-            elif furgo.estacio_descarrega1 is not None:
+            elif furgo.estacio_descarrega2 is None and furgo.estacio_descarrega1 is not None:
                 furgo.estacio_descarrega1 = None
                 furgo.descarrega1 = 0
         
@@ -158,7 +169,12 @@ class Estat(object):
                 nou_estat.ruta[operador.num_furgo].descarrega2 = 1
                 nou_estat.ruta[operador.num_furgo].carrega += 1
         elif isinstance(operador, Intercanviar_bicicletes):
-            nou_estat.ruta[operador.num_furgo].descarrega1, nou_estat.ruta[operador.num_furgo].descarrega2 = nou_estat.ruta[operador.num_furgo].descarrega2, nou_estat.ruta[operador.num_furgo].descarrega1
+            if operador.est == 2:
+                nou_estat.ruta[operador.num_furgo].descarrega1 -= 1
+                nou_estat.ruta[operador.num_furgo].descarrega2 += 1
+            elif operador.est == 1:
+                nou_estat.ruta[operador.num_furgo].descarrega2 -= 1
+                nou_estat.ruta[operador.num_furgo].descarrega1 += 1
         return nou_estat
 
     def h(self):
@@ -194,64 +210,9 @@ def genera_estat_inicial(params: Parametres, estacions: Estaciones) -> Estat:
         est_descarrega1 = next(iterador_est)
         descarrega1 = carrega
         ruta.append(Furgonetes(est_carrega, carrega))
-    '''while True:
-        try:
-            est_carrega = next(iterador_est)
-            estacions_de_carrega.add(est_carrega)
-            est_descarrega1 = next(iterador_est)
-            if est_carrega.num_bicicletas_no_usadas < 30:
-                bicis_no_usades = est_carrega.num_bicicletas_no_usadas
-            else:
-                bicis_no_usades = 30
-            carrega = bicis_no_usades
 
-            try:
-                est_descarrega2 = next(iterador_est)
-                descarrega1 = bicis_no_usades // 2
-                descarrega2 = bicis_no_usades - (bicis_no_usades // 2) 
-                ruta.append(Furgonetes(est_carrega, carrega, est_descarrega1, descarrega1, est_descarrega2, descarrega2))
-            except:
-                descarrega1 = bicis_no_usades
-                ruta.append(Furgonetes(est_carrega, carrega, est_descarrega1, descarrega1))
-
-        except StopIteration:
-            #No hi ha més estacions
-            break'''
 
     return Estat(params, ruta, estacions, estacions_de_carrega) #Instància d'Estat
-
-
-'''def genera_estat_inicial(params: Parametres, estacions: Estaciones) -> Estat:
-    iterador_est = iterar_estacions(estacions)
-    ruta = []
-    estacions_de_carrega = set()
-    while True:
-        try:
-            est_carrega = next(iterador_est)
-            estacions_de_carrega.add(est_carrega)
-            est_descarrega1 = next(iterador_est)
-            if est_carrega.num_bicicletas_no_usadas < 30:
-                bicis_no_usades = est_carrega.num_bicicletas_no_usadas
-            else:
-                bicis_no_usades = 30
-            carrega = bicis_no_usades
-
-            try:
-                est_descarrega2 = next(iterador_est)
-                descarrega1 = bicis_no_usades // 2
-                descarrega2 = bicis_no_usades - (bicis_no_usades // 2) 
-                ruta.append(Furgonetes(est_carrega, carrega, est_descarrega1, descarrega1, est_descarrega2, descarrega2))
-            except:
-                descarrega1 = bicis_no_usades
-                ruta.append(Furgonetes(est_carrega, carrega, est_descarrega1, descarrega1))
-
-        except StopIteration:
-            #No hi ha més estacions
-            break
-
-    return Estat(params, ruta, estacions, estacions_de_carrega) #Instància d'Estat'''
-
-
 
 
 def genera_estat_inicial2(params: Parametres, estaciones: Estaciones) -> Estat:

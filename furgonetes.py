@@ -13,6 +13,7 @@ class Furgonetes(object):
         self.carrega: int = carrega
         self.descarrega1: int = descarrega1
         self.descarrega2: int = descarrega2
+        #assert (self.carrega == self.descarrega1 + self.descarrega2)
         if est_descarrega1 is None:
             assert (descarrega1 == 0)
         if est_descarrega2 is None:
@@ -26,8 +27,8 @@ class Furgonetes(object):
         estacio_carrega = self.estacio_carrega
         estacio_descarrega1 = self.estacio_descarrega1
         estacio_descarrega2 = self.estacio_descarrega2
-
-        if estacio_descarrega1 is not None:
+        
+        if estacio_descarrega1 is not None and estacio_carrega is not None:
             cost_1 = ((carrega + 9) // 10) * (distancia_estacions(estacio_carrega, estacio_descarrega1) / 1000)
             cost_total += cost_1
             
@@ -54,15 +55,18 @@ class Furgonetes(object):
         
     
     def perdues(self):
-        estacio_carrega = self.estacio_carrega
-        carrega = self.carrega
-        perdues = 0
-        if estacio_carrega.num_bicicletas_next <= estacio_carrega.demanda:
-            perdues += carrega
+        if self.estacio_carrega is not None:
+            estacio_carrega = self.estacio_carrega
+            carrega = self.carrega
+            perdues = 0
+            if estacio_carrega.num_bicicletas_next <= estacio_carrega.demanda:
+                perdues += carrega
+            else:
+                sobrants = estacio_carrega.num_bicicletas_next - estacio_carrega.demanda
+                if sobrants < carrega:
+                    perdues += carrega-sobrants
+            return perdues
         else:
-            sobrants = estacio_carrega.num_bicicletas_next - estacio_carrega.demanda
-            if sobrants < carrega:
-                perdues += carrega-sobrants
-        return perdues
+            return 0
     def __repr__(self):
         return f"Furgonetes({self.estacio_carrega}, {self.carrega}, {self.estacio_descarrega1}, {self.descarrega1}, {self.estacio_descarrega2}, {self.descarrega2})"

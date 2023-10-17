@@ -20,13 +20,8 @@ class Estat(object):
     '''def copia(self):
         return Estat(self.params, self.ruta.copy(), self.estacions, self.estacions_de_carrega )'''
     def copia(self):
-        return copy.deepcopy(self)
         # Crea una nueva instancia de Estat con los mismos valores de atributos
-
-        ruta_copia = [copy.copy(furgo) for furgo in self.ruta]
-        #return copia
-        copia = Estat(self.params, ruta_copia, self.estacions, copy.copy(self.estacions_de_carrega))
-        return copia
+        return Estat(self.params, [copy.copy(furgo) for furgo in self.ruta], self.estacions, copy.copy(self.estacions_de_carrega))
 
 
     

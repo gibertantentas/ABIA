@@ -70,3 +70,5 @@ class Furgonetes(object):
             return 0
     def __repr__(self):
         return f"Furgonetes({self.estacio_carrega}, {self.carrega}, {self.estacio_descarrega1}, {self.descarrega1}, {self.estacio_descarrega2}, {self.descarrega2})"
+    def __eq__(self, __value: object) -> bool:
+        return self.estacio_carrega == __value.estacio_carrega and self.carrega == __value.carrega and self.descarrega1 == __value.descarrega1 and self.descarrega2 == __value.descarrega2 and self.estacio_descarrega1 == __value.estacio_descarrega1 and self.estacio_descarrega2 == __value.estacio_descarrega2

@@ -8,15 +8,15 @@ import random
 
 #42
 suma_h = 0
-iter = 500
+iter = 10
 for i in range(iter):
     
     params = Parametres(25, 1250, random.randint(2,5000), 5, 30)
     estacions = Estaciones(params.n_estacions, params.n_bicis, params.llavor)
-
+    
 
     estat_inicial = genera_estat_inicial2(params, estacions) #Necessari executar per crear l'estat inicial
-
+    h_inicial = estat_inicial.h()
     #print('Heurística estat iniciallll: ',estat_inicial.h())
 
 
@@ -33,6 +33,6 @@ for i in range(iter):
     suma_h += n.h()
     #print ('\nHeurística estat inicial', n.h() ) # Valor de l’estat final
 
-
+print('Heurística inicial: ', h_inicial)
 mitjana = suma_h / iter
-print('Heurística mitjana: ', mitjana)
+print('Heurística mitjana final: ', mitjana)

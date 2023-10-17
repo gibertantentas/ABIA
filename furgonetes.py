@@ -28,15 +28,27 @@ class Furgonetes(object):
         estacio_descarrega1 = self.estacio_descarrega1
         estacio_descarrega2 = self.estacio_descarrega2
         
-        if estacio_descarrega1 is not None and estacio_carrega is not None:
+        if estacio_descarrega1 is not None and estacio_carrega is not None and descarrega1 != 0:
             cost_1 = ((carrega + 9) // 10) * (distancia_estacions(estacio_carrega, estacio_descarrega1) / 1000)
             cost_total += cost_1
             
-            if estacio_descarrega2 is not None:
+            if estacio_descarrega2 is not None and descarrega2 != 0:
                 cost_2 = (((carrega - descarrega1) + 9) // 10) * (distancia_estacions(estacio_descarrega1, estacio_descarrega2) / 1000)
                 cost_total += cost_2
-                
+            
+        elif estacio_descarrega1 is None and estacio_carrega is not None and estacio_descarrega2 is not None and descarrega1 == 0 and descarrega2 != 0:
+            cost_3 = (((carrega) + 9) // 10) * (distancia_estacions(estacio_carrega, estacio_descarrega2) / 1000)
+            cost_total += cost_3
+            
         return cost_total
+
+    def distancia_recorregut(self):
+        dist_total = 0
+        if self.estacio_descarrega1 is not None and self.estacio_carrega is not None:
+            dist_total += distancia_estacions(self.estacio_carrega, self.estacio_descarrega1)
+            if self.estacio_descarrega2 is not None:
+                dist_total += distancia_estacions(self.estacio_descarrega1, self.estacio_descarrega2)
+        return dist_total
     
     def guanys(self):
         estacio_descarrega1 = self.estacio_descarrega1

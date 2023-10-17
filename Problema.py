@@ -4,7 +4,6 @@ from aima.search import Problem
 from operadors import Operador
 from estat import Estat
 
-
 class ProblemaBICING(Problem):
     def __init__(self, initial_state: Estat, use_entropy: bool = False):
         self.use_entropy = use_entropy
@@ -14,14 +13,15 @@ class ProblemaBICING(Problem):
         return state.genera_accions()
 
     def result(self, state: Estat, action: Operador) -> Estat:
-        try:
+        '''try:
             furgo = state.ruta[action.num_furgo]
         except:
             furgo = state.ruta[action.num_furgo1]
-        '''print('\n')
-        print(action)
-        print (furgo.carrega, furgo.descarrega1, furgo.descarrega2)
-        print(state.h())'''
+        try:
+            if furgo.descarrega1 == 0 and furgo.descarrega2 > 0:
+                print(f'ERROR: {furgo.descarrega1} i {furgo.descarrega2}')
+        except:
+            pass'''
         return state.aplica_operador(action)
 
     def value(self, state: Estat) -> float:

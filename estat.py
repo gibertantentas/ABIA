@@ -22,7 +22,7 @@ class Estat(object):
     def copia(self):
         # Crea una nueva instancia de Estat con los mismos valores de atributos
         return Estat(self.params, [copy.copy(furgo) for furgo in self.ruta], self.estacions, copy.copy(self.estacions_de_carrega))
-
+        #
 
     
     def genera_accions(self) -> Generator[Operador, None, None]:
@@ -67,43 +67,27 @@ class Estat(object):
 
     def comprova_ruta(self):
         for furgo in self.ruta:
-            if furgo.estacio_descarrega1 is None:
-                if furgo.estacio_descarrega2 is not None:
-                    furgo.estacio_descarrega1 = furgo.estacio_descarrega2
-                    furgo.descarrega1 = furgo.carrega
-                    furgo.estacio_descarrega2 = None
-                    furgo.descarrega2 = 0
-                else:
-                    furgo.descarrega1, furgo.descarrega2 = 0, 0
-            elif furgo.estacio_descarrega2 is None and furgo.descarrega2 != 0:
-                furgo.descarrega2 = 0
-                furgo.descarrega1 = furgo.carrega
-                    
-                return False
-    def aplica_operador(self, operador: Operador):
-        nou_estat = self.copia()
-        if isinstance(operador, Carrega_en_nova_estacio):
-            
-            nou_estat.estacions_de_carrega.add(operador.est_nova)
-            for est in nou_estat.estacions_de_carrega:
-                if est == nou_estat.ruta[operador.num_furgo].estacio_carrega:
-                    nou_estat.estacions_de_carrega.remove(est)
-                    break
-                
-            nou_estat.ruta[operador.num_furgo].estacio_carrega = operador.est_nova
-            
-            for furgo in nou_estat.ruta:
-                if furgo.estacio_descarrega1 is None:
+                if furgo.estacio_descarrega1 is None or furgo.descarrega1 == 0:
                     if furgo.estacio_descarrega2 is not None:
                         furgo.estacio_descarrega1 = furgo.estacio_descarrega2
-                        furgo.descarrega1 = furgo.carrega
+                        furgo.descarrega1 = furgo.descarrega2
                         furgo.estacio_descarrega2 = None
                         furgo.descarrega2 = 0
                     else:
                         furgo.descarrega1, furgo.descarrega2 = 0, 0
                 elif furgo.estacio_descarrega2 is None and furgo.descarrega2 != 0:
                     furgo.descarrega2 = 0
-                    furgo.descarrega1 = furgo.carrega
+                    
+                return False
+    def aplica_operador(self, operador: Operador):
+        nou_estat = self.copia()
+        if isinstance(operador, Carrega_en_nova_estacio):
+            nou_estat.estacions_de_carrega.add(operador.est_nova)
+            if nou_estat.ruta[operador.num_furgo].estacio_carrega in nou_estat.estacions_de_carrega:
+                nou_estat.estacions_de_carrega.remove(nou_estat.ruta[operador.num_furgo].estacio_carrega)
+            nou_estat.ruta[operador.num_furgo].estacio_carrega = operador.est_nova
+
+            
             
 
         
@@ -135,7 +119,7 @@ class Estat(object):
             
             elif operador.est_intercanvi1 == 2 and operador.est_intercanvi2 == 2:
                 nou_estat.ruta[operador.num_furgo1].estacio_descarrega2, nou_estat.ruta[operador.num_furgo2].estacio_descarrega2 = nou_estat.ruta[operador.num_furgo2].estacio_descarrega2, nou_estat.ruta[operador.num_furgo1].estacio_descarrega2
-
+            nou_estat.comprova_ruta()
            
         elif isinstance(operador, Carrega_menys_bicicletes):
             nou_estat.ruta[operador.num_furgo].carrega -= 1
@@ -163,7 +147,7 @@ class Estat(object):
             elif operador.estacio_descarrega == 2:
                 nou_estat.ruta[operador.num_furgo].descarrega2 += operador.bicicletes
                 nou_estat.ruta[operador.num_furgo].carrega += operador.bicicletes
-        
+
         elif isinstance(operador, Descarrega_menys_bicicletes):
             if operador.estacio_descarrega == 1:
                 nou_estat.ruta[operador.num_furgo].descarrega1 -= operador.bicicletes
@@ -171,7 +155,7 @@ class Estat(object):
             elif operador.estacio_descarrega == 2:
                 nou_estat.ruta[operador.num_furgo].descarrega2 -= operador.bicicletes
                 nou_estat.ruta[operador.num_furgo].carrega -= operador.bicicletes
-                
+            
         elif isinstance(operador, Descarrega_en_nova_estacio):
             furgo = nou_estat.ruta[operador.num_furgo]
             if furgo.estacio_descarrega1 is None:
@@ -189,6 +173,7 @@ class Estat(object):
             elif operador.est == 1:
                 nou_estat.ruta[operador.num_furgo].descarrega2 -= 1
                 nou_estat.ruta[operador.num_furgo].descarrega1 += 1
+        #nou_estat.comprova_ruta()
         return nou_estat
 
     def h(self):

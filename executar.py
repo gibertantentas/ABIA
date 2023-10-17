@@ -4,35 +4,42 @@ from estat import genera_estat_inicial, genera_estat_inicial2
 from aima.search import hill_climbing
 from Problema import ProblemaBICING
 import random
+import time
 
 
-#42
-suma_h = 0
-iter = 10
-for i in range(iter):
+#random.randint(2,5000)
+params = Parametres(25, 1250, 42 , 5, 30)
+estacions = Estaciones(params.n_estacions, params.n_bicis, params.llavor)
     
-    params = Parametres(25, 1250, random.randint(2,5000), 5, 30)
+
+estat_inicial = genera_estat_inicial2(params, estacions) #Necessari executar per crear l'estat inicial
+h_inicial = estat_inicial.h()
+time_start = time.time()
+n = hill_climbing(ProblemaBICING(estat_inicial))
+dist_total = sum(furgo.distancia_recorregut() for furgo in n.ruta)
+time_end = time.time()
+
+total_time = time_end - time_start
+
+print(f'\nDistància total recorreguda per les furgonetes: {dist_total /1000 } km')
+print(f"Guanys de l'estat inicial: {h_inicial} euros")
+print(f"Guanys de l'estat final: {n.h()} euros")
+print(f"Temps de cerca: {round(total_time * 1000,2)} ms")
+
+'''mitja = 0
+for i in range(100):
+    params = Parametres(25, 1250, random.randint(2,50000000), 5, 30)
     estacions = Estaciones(params.n_estacions, params.n_bicis, params.llavor)
-    
+        
 
     estat_inicial = genera_estat_inicial2(params, estacions) #Necessari executar per crear l'estat inicial
     h_inicial = estat_inicial.h()
-    #print('Heurística estat iniciallll: ',estat_inicial.h())
-
-
+    time_start = time.time()
     n = hill_climbing(ProblemaBICING(estat_inicial))
-    #print('\nRUTA:')
-    '''for i in range(len(n.ruta)):
-        print(f'\n\nFurgoneta {i}: \n')
-        print(f"Carrega: {n.ruta[i].carrega} bicicletes a l'estació {n.ruta[i].estacio_carrega.coordX, n.ruta[i].estacio_carrega.coordY} \
-            \nDescarrega {n.ruta[i].descarrega1} bicicletes a l'estació {n.ruta[i].estacio_descarrega1.coordX, n.ruta[i].estacio_descarrega1.coordY}\
-            \nDescarrega 2: {n.ruta[i].descarrega2} bicicletes a l'estació {n.ruta[i].estacio_descarrega2.coordX, n.ruta[i].estacio_descarrega2.coordY}")
-    #print ('Estat final: ', n ) # Estat final
-    '''
-    
-    suma_h += n.h()
-    #print ('\nHeurística estat inicial', n.h() ) # Valor de l’estat final
+    dist_total = sum(furgo.distancia_recorregut() for furgo in n.ruta)
+    time_end = time.time()
 
-print('Heurística inicial: ', h_inicial)
-mitjana = suma_h / iter
-print('Heurística mitjana final: ', mitjana)
+    total_time = time_end - time_start
+    mitja += n.h()
+    
+print(mitja/100)'''

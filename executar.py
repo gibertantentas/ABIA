@@ -1,6 +1,6 @@
 from abia_bicing import Estacion, Estaciones
 from parametres import Parametres
-from estat import genera_estat_inicial, genera_estat_inicial2
+from estat import genera_estat_inicial, genera_estat_inicial2, genera_estat_inicial0
 from aima.search import hill_climbing
 from Problema import ProblemaBICING
 import random

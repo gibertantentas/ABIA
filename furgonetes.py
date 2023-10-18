@@ -6,7 +6,7 @@ def distancia_estacions(est1: Estacion, est2: Estacion) -> int:
     return distancia
 class Furgonetes(object):
 
-    def __init__(self, est_carrega: Estacion, carrega: int, est_descarrega1: Estacion = None, descarrega1: int = 0 , est_descarrega2: Estacion = None , descarrega2: int = 0):
+    def __init__(self, est_carrega: Estacion = None, carrega: int = 0, est_descarrega1: Estacion = None, descarrega1: int = 0 , est_descarrega2: Estacion = None , descarrega2: int = 0):
         self.estacio_carrega = est_carrega
         self.estacio_descarrega1 = est_descarrega1
         self.estacio_descarrega2 = est_descarrega2
@@ -85,3 +85,8 @@ class Furgonetes(object):
         return f"Furgonetes({self.estacio_carrega}, {self.carrega}, {self.estacio_descarrega1}, {self.descarrega1}, {self.estacio_descarrega2}, {self.descarrega2})"
     def __eq__(self, __value: object) -> bool:
         return self.estacio_carrega == __value.estacio_carrega and self.carrega == __value.carrega and self.descarrega1 == __value.descarrega1 and self.descarrega2 == __value.descarrega2 and self.estacio_descarrega1 == __value.estacio_descarrega1 and self.estacio_descarrega2 == __value.estacio_descarrega2
+    def __copy__(self):
+        return Furgonetes(self.estacio_carrega, self.carrega, self.estacio_descarrega1, self.descarrega1, self.estacio_descarrega2 , self.descarrega2)
+
+
+

@@ -3,32 +3,36 @@ from typing import List, Set, Generator
 from parametres import Parametres
 from furgonetes import Furgonetes
 from operadors import *
-import copy
 
 
+comptador = 0
         
 class Estat(object):
     """
     Classe que representa un estat
     """
     def __init__(self, parametres: Parametres,  ruta: List[Furgonetes], estacions: Estaciones, estacions_de_carrega: set()):
+
         self.params = parametres
         self.ruta =  ruta
         self.estacions = estacions
         self.estacions_de_carrega = estacions_de_carrega
         
+        global comptador
+        comptador += 1
+        print('Comptador',comptador)
+        
     '''def copia(self):
         return Estat(self.params, self.ruta.copy(), self.estacions, self.estacions_de_carrega )'''
-    def copia(self):
-        # Crea una nueva instancia de Estat con los mismos valores de atributos
-        return Estat(self.params, [copy.copy(furgo) for furgo in self.ruta], self.estacions, copy.copy(self.estacions_de_carrega))
-        #
+    
 
     
     def genera_accions(self) -> Generator[Operador, None, None]:
         quant_furgos = len(self.ruta)
+        if quant_furgos < self.params.n_furgonetes:
+            yield Nova_furgo()
+        
         for num_furgo in range(quant_furgos):
-            
             for num_furgo2 in range(num_furgo + 1, quant_furgos):
                 if num_furgo != num_furgo2:
                     if self.ruta[num_furgo].estacio_carrega is not None:
@@ -75,9 +79,11 @@ class Estat(object):
 
             if self.ruta[num_furgo].carrega > self.ruta[num_furgo].descarrega1 + self.ruta[num_furgo].descarrega2:
                 yield Carrega_menys_bicicletes(num_furgo)
-                
+
             for est_nova in self.estacions.lista_estaciones:
+
                 if est_nova not in self.estacions_de_carrega:
+
                     yield Carrega_en_nova_estacio(num_furgo, est_nova)
                     
                 if self.ruta[num_furgo].carrega < 30:
@@ -98,7 +104,25 @@ class Estat(object):
                 nou_estat.estacions_de_carrega.remove(nou_estat.ruta[operador.num_furgo].estacio_carrega)
             nou_estat.ruta[operador.num_furgo].estacio_carrega = operador.est_nova
 
-        
+        elif isinstance(operador, Nova_furgo):
+            carrega_max = 0
+            for est in nou_estat.estacions.lista_estaciones:
+                if est.num_bicicletas_no_usadas > carrega_max and est not in nou_estat.estacions_de_carrega:
+                    estacio_carrega = est
+                    carrega = est.num_bicicletas_no_usadas
+            
+            dist_max = float('inf')
+            for est2 in nou_estat.estacions.lista_estaciones:
+                if est2 is not estacio_carrega and distancia_estacions(est2, estacio_carrega) < dist_max and est not in nou_estat.estacions_de_carrega:
+                    estacio_descarrega = est2
+            furgo = Furgonetes(estacio_carrega, est.num_bicicletas_no_usadas, estacio_descarrega, est.num_bicicletas_no_usadas)
+            
+            nou_estat.ruta.append(furgo)
+            #print(furgo)
+            print('RUTA',nou_estat.ruta)
+            print(furgo.cost_gasolina())
+            print('H',nou_estat.h()) 
+                   
         elif isinstance(operador, Intercanviar_estacions):
             if operador.est_intercanvi1 == 0 and operador.est_intercanvi2 == 0:
                 nou_estat.ruta[operador.num_furgo1].estacio_carrega, nou_estat.ruta[operador.num_furgo2].estacio_carrega = nou_estat.ruta[operador.num_furgo2].estacio_carrega, nou_estat.ruta[operador.num_furgo1].estacio_carrega
@@ -192,11 +216,21 @@ class Estat(object):
         
     def __repr__(self):
         return f"Ruta: {self.ruta}"
-        #return f"Parametres: n_estacions={self.params.n_estacions}, n_bicis={self.params.n_bicis}, llavor={self.params.llavor}, n_furgonetes={self.params.n_furgonetes}"   
-    
-    #Per implementar ruta com a Set
+
+    def copia(self):
+        nou_estat = Estat(self.params, [furgo.__copy__() for furgo in self.ruta], self.estacions, set(self.estacions_de_carrega))
+        if nou_estat != self:
+            print('DIFERENT')
+        if nou_estat is self:
+            print('ES')
+        return Estat(self.params, [furgo.__copy__() for furgo in self.ruta], self.estacions, set(self.estacions_de_carrega))
+
+    def __eq__(self, __value):
+        return self.params == __value.params and self.ruta == __value.ruta and self.estacions == __value.estacions and  self.estacions_de_carrega == __value.estacions_de_carrega
 
 
+def genera_estat_inicial0(params: Parametres, estacions: Estaciones) -> Estat:
+    return Estat(params, [], estacions, set())
 def genera_estat_inicial(params: Parametres, estacions: Estaciones) -> Estat:
     iterador_est = iterar_estacions(estacions)
     ruta = []
@@ -254,6 +288,7 @@ def genera_estat_inicial2(params: Parametres, estaciones: Estaciones) -> Estat:
     return Estat(params, ruta, estaciones, set(estacions_carrega))
 
 
+
  
 def distancia_estacions(origen: Estacion, desti: Estacion):
     return abs(origen.coordX - desti.coordX) + abs(origen.coordY - desti.coordY)
@@ -261,3 +296,6 @@ def distancia_estacions(origen: Estacion, desti: Estacion):
 def iterar_estacions(estacions: Estaciones) ->Generator[Estacion, None, None]:
     return (estacio for estacio in estacions.lista_estaciones)
 
+
+
+    

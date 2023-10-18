@@ -5,6 +5,11 @@ from furgonetes import Furgonetes
 class Operador():
     pass
 
+class Nova_furgo(Operador):
+    def __init__(self):
+        pass
+    def __repr__(self):
+        return f"S'afegeix una furgo a la ruta"
 class Carrega_en_nova_estacio(Operador): #Perjudica
     def __init__(self, num_furgo: int, est_nova:Estacion):
         self.num_furgo = num_furgo

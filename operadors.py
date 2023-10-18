@@ -5,6 +5,11 @@ from furgonetes import Furgonetes
 class Operador():
     pass
 
+class Eliminar_furgo(Operador):
+    def __init__(self, num_furgo: int):
+        self.num_furgo = num_furgo
+    def __repr__(self):
+        return f"Elimina l'estació {self.num_furgo}"
 class Nova_furgo(Operador):
     def __init__(self):
         pass
@@ -25,13 +30,6 @@ class Intercanviar_estacions(Operador): #Dins de la classe ESTAT
         self.est_intercanvi2 = est_intercanvi2
     def __repr__(self):
         return f"Les furgonetes {self.num_furgo1} i {self.num_furgo2} s'intercanvien una estació"
-        
-'''class Carrega_mes_bicicletes(Operador): #Dins de la classe ESTAT
-    def __init__(self, num_furgo: int):
-        self.num_furgo = num_furgo
-        #self.num_bicicletes = 5
-    def __repr__(self):
-        return f"La furgo {self.num_furgo} carregarà més bicicletes a l'estació de càrrega"'''
 
 class Carrega_menys_bicicletes(Operador): #Dins de la classe ESTAT
     def __init__(self, num_furgo: int):
@@ -77,7 +75,7 @@ class Descarrega_en_nova_estacio(Operador): #Dins de la classe ESTAT
     def __repr__(self):
         return f"La furgo {self.num_furgo} afegeix l'estació {self.estacio_descarrega.coordX}, {self.estacio_descarrega.coordY} a la seva ruta de descàrrega"
 
-class Intercanviar_bicicletes(Operador): #No aporta cap benefici
+class Intercanviar_bicicletes(Operador):
     def __init__(self, num_furgo : int, est: int):
         self.num_furgo = num_furgo
         self.est = est
@@ -85,19 +83,3 @@ class Intercanviar_bicicletes(Operador): #No aporta cap benefici
         return f"La furgo {self.num_furgo} modifica la descàrrega en les seves estacions"
     
     
-'''Proposta del chat:
-    
-Los operadores propuestos hasta ahora son:
-
-1. Carrega_en_nova_estacio: Esta operación carga bicicletas en una nueva estación. Perjudica porque reduce la cantidad de bicicletas en la estación de origen y aumenta la cantidad en la estación de destino.
-
-2. Descarrega_en_estacio1: Esta operación descarga bicicletas en la estación 1. Beneficia porque aumenta la cantidad de bicicletas en la estación de destino y reduce la cantidad en la furgoneta.
-
-3. Descarrega_en_estacio2: Esta operación descarga bicicletas en la estación 2. Beneficia porque aumenta la cantidad de bicicletas en la estación de destino y reduce la cantidad en la furgoneta.
-
-4. Intercanvi_entre_estacions: Esta operación intercambia bicicletas entre dos estaciones. Beneficia porque aumenta la cantidad de bicicletas en una estación y reduce la cantidad en la otra.
-
-5. Intercanvi_entre_furgonetes: Esta operación intercambia bicicletas entre dos furgonetas. Beneficia porque aumenta la cantidad de bicicletas en una furgoneta y reduce la cantidad en la otra.
-
-Es importante tener en cuenta que cada operador debe respetar las restricciones del problema, como la capacidad máxima de las furgonetas y el número máximo de estaciones que pueden visitar. Además, se pueden proponer otros operadores según las necesidades específicas del problema.
-'''

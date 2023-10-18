@@ -20,10 +20,9 @@ class Estat(object):
         
         global comptador
         comptador += 1
-        print('Comptador',comptador)
+        #print('Comptador',comptador)
         
-    '''def copia(self):
-        return Estat(self.params, self.ruta.copy(), self.estacions, self.estacions_de_carrega )'''
+   
     
 
     
@@ -33,22 +32,26 @@ class Estat(object):
             yield Nova_furgo()
         
         for num_furgo in range(quant_furgos):
+
             for num_furgo2 in range(num_furgo + 1, quant_furgos):
                 if num_furgo != num_furgo2:
                     if self.ruta[num_furgo].estacio_carrega is not None:
-                        yield Intercanviar_estacions(num_furgo, num_furgo2, 0, 0)
+                        if self.ruta[num_furgo2].estacio_carrega is not None:
+                            yield Intercanviar_estacions(num_furgo, num_furgo2, 0, 0)
                         if self.ruta[num_furgo2].estacio_descarrega1 is not None:
                             yield Intercanviar_estacions(num_furgo, num_furgo2, 0, 1)
                         if self.ruta[num_furgo2].estacio_descarrega2 is not None:
                             yield Intercanviar_estacions(num_furgo, num_furgo2, 0, 2)
                     if self.ruta[num_furgo].estacio_descarrega1 is not None:
-                        yield Intercanviar_estacions(num_furgo, num_furgo2, 1, 0)
+                        if self.ruta[num_furgo2].estacio_carrega is not None:
+                            yield Intercanviar_estacions(num_furgo, num_furgo2, 1, 0)
                         if self.ruta[num_furgo2].estacio_descarrega1 is not None:
                             yield Intercanviar_estacions(num_furgo, num_furgo2, 1, 1)
                         if self.ruta[num_furgo2].estacio_descarrega2 is not None:
                             yield Intercanviar_estacions(num_furgo, num_furgo2, 1, 2)
                     if self.ruta[num_furgo].estacio_descarrega2 is not None:
-                        yield Intercanviar_estacions(num_furgo, num_furgo2, 2, 0)
+                        if self.ruta[num_furgo2].estacio_carrega is not None:
+                            yield Intercanviar_estacions(num_furgo, num_furgo2, 2, 0)
                         if self.ruta[num_furgo2].estacio_descarrega1 is not None:
                             yield Intercanviar_estacions(num_furgo, num_furgo2, 2, 1)
                         if self.ruta[num_furgo2].estacio_descarrega2 is not None:
@@ -88,6 +91,8 @@ class Estat(object):
                     
                 if self.ruta[num_furgo].carrega < 30:
                     yield Descarrega_en_nova_estacio(num_furgo, est_nova)
+                    
+
                 
 
             
@@ -107,21 +112,23 @@ class Estat(object):
         elif isinstance(operador, Nova_furgo):
             carrega_max = 0
             for est in nou_estat.estacions.lista_estaciones:
-                if est.num_bicicletas_no_usadas > carrega_max and est not in nou_estat.estacions_de_carrega:
+                if est not in nou_estat.estacions_de_carrega and est.num_bicicletas_no_usadas > carrega_max:
                     estacio_carrega = est
                     carrega = est.num_bicicletas_no_usadas
             
             dist_max = float('inf')
             for est2 in nou_estat.estacions.lista_estaciones:
-                if est2 is not estacio_carrega and distancia_estacions(est2, estacio_carrega) < dist_max and est not in nou_estat.estacions_de_carrega:
+                if est2 is not estacio_carrega and est not in nou_estat.estacions_de_carrega and distancia_estacions(est2, estacio_carrega) < dist_max :
                     estacio_descarrega = est2
-            furgo = Furgonetes(estacio_carrega, est.num_bicicletas_no_usadas, estacio_descarrega, est.num_bicicletas_no_usadas)
+            try:
+                nou_estat.ruta.append(Furgonetes(estacio_carrega, carrega, estacio_descarrega, carrega))
+            except:
+                pass
+
+        elif isinstance(operador, Eliminar_furgo): #No es genera a genera_estacions
+            del nou_estat.ruta[operador.num_furgo]
+
             
-            nou_estat.ruta.append(furgo)
-            #print(furgo)
-            print('RUTA',nou_estat.ruta)
-            print(furgo.cost_gasolina())
-            print('H',nou_estat.h()) 
                    
         elif isinstance(operador, Intercanviar_estacions):
             if operador.est_intercanvi1 == 0 and operador.est_intercanvi2 == 0:
@@ -229,9 +236,9 @@ class Estat(object):
         return self.params == __value.params and self.ruta == __value.ruta and self.estacions == __value.estacions and  self.estacions_de_carrega == __value.estacions_de_carrega
 
 
-def genera_estat_inicial0(params: Parametres, estacions: Estaciones) -> Estat:
+def genera_estat_inicial1(params: Parametres, estacions: Estaciones) -> Estat:
     return Estat(params, [], estacions, set())
-def genera_estat_inicial(params: Parametres, estacions: Estaciones) -> Estat:
+def genera_estat_inicial0(params: Parametres, estacions: Estaciones) -> Estat:
     iterador_est = iterar_estacions(estacions)
     ruta = []
     estacions_de_carrega = set()

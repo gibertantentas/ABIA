@@ -4,6 +4,7 @@ from aima.search import Problem
 from operadors import Operador
 from estat import Estat
 
+
 class ProblemaBICING(Problem):
     def __init__(self, initial_state: Estat, use_entropy: bool = False):
         self.use_entropy = use_entropy
@@ -13,6 +14,8 @@ class ProblemaBICING(Problem):
         return state.genera_accions()
 
     def result(self, state: Estat, action: Operador) -> Estat:
+
+        #print(action)
         '''try:
             furgo = state.ruta[action.num_furgo]
         except:

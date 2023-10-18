@@ -70,11 +70,12 @@ class Furgonetes(object):
         if self.estacio_carrega is not None:
             estacio_carrega = self.estacio_carrega
             carrega = self.carrega
+            demanda = estacio_carrega.demanda
             perdues = 0
-            if estacio_carrega.num_bicicletas_next <= estacio_carrega.demanda:
+            if estacio_carrega.num_bicicletas_next <= demanda:
                 perdues += carrega
             else:
-                sobrants = estacio_carrega.num_bicicletas_next - estacio_carrega.demanda
+                sobrants = estacio_carrega.num_bicicletas_next - demanda
                 if sobrants < carrega:
                     perdues += carrega-sobrants
             return perdues

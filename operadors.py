@@ -42,10 +42,11 @@ class Modificar_sentit_ruta(Operador): #Dins de la classe ESTAT
 
 
 class Eliminar_estacio_descarrega(Operador): #Dins de la classe ESTAT
-    def __init__(self, num_furgo: int):
+    def __init__(self, num_furgo: int, estacio_eliminada:int):
         self.num_furgo = num_furgo
+        self.estacio_eliminada = estacio_eliminada
     def __repr__(self):
-        return f"La furgo {self.num_furgo} elimina una estació de la seva ruta de descàrrega"
+        return f"La furgo {self.num_furgo} elimina l'estació de descàrrega {self.estacio_eliminada}"
     
 class Descarrega_mes_bicicletes(Operador):
     def __init__(self, num_furgo: int, estacio_descarrega: int):

@@ -124,19 +124,21 @@ class Estat(object):
                     #print('Possible descarrega', est2.coordX, est2.coordY)
                     #print(distancia_estacions(est2, estacio_carrega), dist_max)
                     #print(est2 is not estacio_carrega and est2 not in nou_estat.estacions_de_carrega and distancia_estacions(est2, estacio_carrega) < dist_max)
-                    if est2 is not estacio_carrega and est2 not in nou_estat.estacions_de_carrega and distancia_estacions(est2, estacio_carrega) < dist_max:
+                    if est2 is not estacio_carrega and est2 not in nou_estat.estacions_de_carrega and distancia_estacions(est2, estacio_carrega) < dist_max and (est2.demanda - est.num_bicicletas_next) > 5:
                         dist_max = distancia_estacions(est2, estacio_carrega)
                         estacio_descarrega = est2
 
             carrega = min(carrega, estacio_descarrega.demanda)
             print('carrega escollida', carrega)
-
-            try:
+            nou_estat.ruta.append(Furgonetes(estacio_carrega, carrega, estacio_descarrega, carrega))
+            print('HE AFEGIT FURGO:',estacio_carrega.coordX, estacio_carrega.coordY, estacio_descarrega.coordX, estacio_descarrega.coordY, carrega)
+            nou_estat.estacions_de_carrega.add(estacio_carrega)
+            '''try:
                 nou_estat.ruta.append(Furgonetes(estacio_carrega, carrega, estacio_descarrega, carrega))
-                print('HE AFEGIT FURGO:',estacio_carrega.coordX, estacio_carrega.coordY, estacio_descarrega.coordX, estacio_descarrega.coordY)
+                print('HE AFEGIT FURGO:',estacio_carrega.coordX, estacio_carrega.coordY, estacio_descarrega.coordX, estacio_descarrega.coordY, descarrega)
                 nou_estat.estacions_de_carrega.add(estacio_carrega)
             except:
-                pass
+                pass'''
 
         elif isinstance(operador, Eliminar_furgo): #No es genera a genera_estacions
             del nou_estat.ruta[operador.num_furgo]
@@ -232,6 +234,7 @@ class Estat(object):
         cost_gasolina = sum(furgo.cost_gasolina() for furgo in self.ruta)
         guanys = sum(furgo.guanys() for furgo in self.ruta)
         perdues = sum(furgo.perdues() for furgo in self.ruta)
+        print(f'Guanys: {guanys}, perdues {perdues}, cost gasolina {cost_gasolina}')
         return guanys - perdues - cost_gasolina
         
     def __repr__(self):

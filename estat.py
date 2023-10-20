@@ -19,9 +19,9 @@ class Estat(object):
         self.estacions_de_carrega = estacions_de_carrega
         
         global comptador
-        comptador += 1
-        #print('Comptador',comptador)
         
+        print('Comptador',comptador)
+        comptador += 1
    
     
 
@@ -64,7 +64,7 @@ class Estat(object):
                     yield Descarrega_mes_bicicletes(num_furgo, 1)
                     
                 if self.ruta[num_furgo].estacio_descarrega2 is not None:
-                    #yield Modificar_sentit_ruta(num_furgo)
+                    yield Modificar_sentit_ruta(num_furgo)
                     yield Eliminar_estacio_descarrega(num_furgo,1)
                     yield Eliminar_estacio_descarrega(num_furgo,2)
                     if self.ruta[num_furgo].descarrega1 > 0:
@@ -80,8 +80,8 @@ class Estat(object):
             
 
 
-            if self.ruta[num_furgo].carrega > self.ruta[num_furgo].descarrega1 + self.ruta[num_furgo].descarrega2:
-                yield Carrega_menys_bicicletes(num_furgo)
+            '''if self.ruta[num_furgo].carrega > self.ruta[num_furgo].descarrega1 + self.ruta[num_furgo].descarrega2:
+                yield Carrega_menys_bicicletes(num_furgo)'''
 
             for est_nova in self.estacions.lista_estaciones:
 
@@ -122,6 +122,7 @@ class Estat(object):
                     estacio_descarrega = est2
             try:
                 nou_estat.ruta.append(Furgonetes(estacio_carrega, carrega, estacio_descarrega, carrega))
+                nou_estat.estacions_de_carrega.add(estacio_carrega)
             except:
                 pass
 

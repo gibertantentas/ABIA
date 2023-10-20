@@ -20,7 +20,7 @@ class Estat(object):
         
         global comptador
         
-        print('Comptador',comptador)
+        #print('Comptador',comptador)
         comptador += 1
    
     
@@ -28,11 +28,11 @@ class Estat(object):
     
     def genera_accions(self) -> Generator[Operador, None, None]:
         quant_furgos = len(self.ruta)
+
         if quant_furgos < self.params.n_furgonetes:
             yield Nova_furgo()
         
         for num_furgo in range(quant_furgos):
-
             for num_furgo2 in range(num_furgo + 1, quant_furgos):
                 if num_furgo != num_furgo2:
                     if self.ruta[num_furgo].estacio_carrega is not None:
@@ -115,13 +115,25 @@ class Estat(object):
                 if est not in nou_estat.estacions_de_carrega and est.num_bicicletas_no_usadas > carrega_max:
                     estacio_carrega = est
                     carrega = est.num_bicicletas_no_usadas
-            
-            dist_max = float('inf')
-            for est2 in nou_estat.estacions.lista_estaciones:
-                if est2 is not estacio_carrega and est not in nou_estat.estacions_de_carrega and distancia_estacions(est2, estacio_carrega) < dist_max :
-                    estacio_descarrega = est2
+                    print('Possible carrega:',carrega)
+                    carrega_max = carrega
+                    
+            if estacio_carrega:
+                dist_max = float('inf')
+                for est2 in nou_estat.estacions.lista_estaciones:
+                    #print('Possible descarrega', est2.coordX, est2.coordY)
+                    #print(distancia_estacions(est2, estacio_carrega), dist_max)
+                    #print(est2 is not estacio_carrega and est2 not in nou_estat.estacions_de_carrega and distancia_estacions(est2, estacio_carrega) < dist_max)
+                    if est2 is not estacio_carrega and est2 not in nou_estat.estacions_de_carrega and distancia_estacions(est2, estacio_carrega) < dist_max:
+                        dist_max = distancia_estacions(est2, estacio_carrega)
+                        estacio_descarrega = est2
+
+            carrega = min(carrega, estacio_descarrega.demanda)
+            print('carrega escollida', carrega)
+
             try:
                 nou_estat.ruta.append(Furgonetes(estacio_carrega, carrega, estacio_descarrega, carrega))
+                print('HE AFEGIT FURGO:',estacio_carrega.coordX, estacio_carrega.coordY, estacio_descarrega.coordX, estacio_descarrega.coordY)
                 nou_estat.estacions_de_carrega.add(estacio_carrega)
             except:
                 pass
@@ -198,13 +210,13 @@ class Estat(object):
         elif isinstance(operador, Descarrega_en_nova_estacio):
             furgo = nou_estat.ruta[operador.num_furgo]
             if furgo.estacio_descarrega1 is None:
-                nou_estat.ruta[operador.num_furgo].estacio_descarrega1 = operador.estacio_descarrega
-                nou_estat.ruta[operador.num_furgo].descarrega1 = 1
-                nou_estat.ruta[operador.num_furgo].carrega += 1
-            elif furgo.estacio_descarrega2 is None:
-                nou_estat.ruta[operador.num_furgo].estacio_descarrega2 = operador.estacio_descarrega
-                nou_estat.ruta[operador.num_furgo].descarrega2 = 1
-                nou_estat.ruta[operador.num_furgo].carrega += 1
+                furgo.estacio_descarrega1 = operador.estacio_descarrega
+                furgo.descarrega1 = 1
+                furgo.carrega += 1
+            elif furgo.estacio_descarrega2 is None and furgo.estacio_descarrega1 is not operador.estacio_descarrega:
+                furgo.estacio_descarrega2 = operador.estacio_descarrega
+                furgo.descarrega2 = 1
+                furgo.carrega += 1
                 
         elif isinstance(operador, Intercanviar_bicicletes):
             if operador.est == 2:

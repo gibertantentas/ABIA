@@ -48,14 +48,15 @@ total_time1 = time_end1 - time_start1
 print(f"\nEstat 2: \n  Inicial: {h_inicial2} euros Final: {n2.h()} euros")
 print('TEMPS:',total_time1)
 
-for furgo in n2.ruta:
+print(n2.ruta)
+'''for furgo in n2.ruta:
     try:
         print('\n\nFurgo: ',furgo.estacio_carrega.coordX, furgo.estacio_carrega.coordY, '\n', furgo.estacio_descarrega1.coordX, furgo.estacio_descarrega1.coordY, '\nDescarrega2', furgo.estacio_descarrega2.coordX, furgo.estacio_descarrega2.coordY)
     except:
         try:
             print('\n\nFurgo: ',furgo.estacio_carrega.coordX, furgo.estacio_carrega.coordY, '\n', furgo.estacio_descarrega1.coordX, furgo.estacio_descarrega1.coordY)
         except:
-            pass
+            pass'''
         
             
 '''time_start2 = time.time()

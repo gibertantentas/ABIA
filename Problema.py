@@ -14,9 +14,6 @@ class ProblemaBICING(Problem):
         return state.genera_accions()
 
     def result(self, state: Estat, action: Operador) -> Estat:
-        s = state.aplica_operador(action)
-        print(s.h(),'\n\n\n')
-        return s
         #print(action)
         '''try:
             furgo = state.ruta[action.num_furgo]

@@ -55,7 +55,6 @@ class Descarrega_mes_bicicletes(Operador):
     def __init__(self, num_furgo: int, estacio_descarrega: int):
         self.num_furgo = num_furgo
         self.estacio_descarrega = estacio_descarrega
-        self.bicicletes = 1
     def __repr__(self):
         return f"La furgo {self.num_furgo} descarregarà més bicicletes a l'estació de descàrrega {self.estacio_descarrega}"
     
@@ -64,7 +63,6 @@ class Descarrega_menys_bicicletes(Operador):
     def __init__(self, num_furgo: int, estacio_descarrega: int):
         self.num_furgo = num_furgo
         self.estacio_descarrega = estacio_descarrega
-        self.bicicletes = -1
     def __repr__(self):
         return f"La furgo {self.num_furgo} descarregarà menys bicicletes a l'estació de descàrrega {self.estacio_descarrega}"
     

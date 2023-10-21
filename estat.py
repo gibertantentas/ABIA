@@ -104,7 +104,7 @@ class Estat(object):
                 nou_estat.estacions_de_carrega.remove(nou_estat.ruta[operador.num_furgo].estacio_carrega)
             nou_estat.ruta[operador.num_furgo].estacio_carrega = operador.est_nova
 
-        elif isinstance(operador, Nova_furgo):
+        elif isinstance(operador, Nova_furgo):            
             carrega_max = 0
             for est in nou_estat.estacions.lista_estaciones:
                 if est not in nou_estat.estacions_de_carrega and est.num_bicicletas_no_usadas > carrega_max:
@@ -115,14 +115,16 @@ class Estat(object):
             if estacio_carrega:
                 dist_max = float('inf')
                 for est2 in nou_estat.estacions.lista_estaciones:
-                    if est2 is not estacio_carrega and est2 not in nou_estat.estacions_de_carrega and distancia_estacions(est2, estacio_carrega) < dist_max and (est2.demanda - est.num_bicicletas_next) > 0:
+                    if est2 is not estacio_carrega and est2 not in nou_estat.estacions_de_carrega and distancia_estacions(est2, estacio_carrega) < dist_max and (est2.demanda - est2.num_bicicletas_next) > 0:
                         dist_max = distancia_estacions(est2, estacio_carrega)
-                        estacio_descarrega = est2
-
-                #carrega = min(carrega, estacio_descarrega.demanda - estacio_descarrega.num_bicicletas_next) 
-                nou_estat.ruta.append(Furgonetes(estacio_carrega, carrega, estacio_descarrega, carrega))
+                        estacio_descarrega1 = est2
+                carrega = min(carrega, estacio_descarrega1.demanda - estacio_descarrega1.num_bicicletas_next) 
+                nou_estat.ruta.append(Furgonetes(estacio_carrega, carrega, estacio_descarrega1, carrega))
+                print(nou_estat.ruta)
+                print(nou_estat.h())
                 nou_estat.estacions_de_carrega.add(estacio_carrega)
-  
+            
+              
 
 
             
@@ -239,8 +241,55 @@ class Estat(object):
                 nou_estat.ruta[operador.num_furgo].descarrega1 += 1
         #nou_estat.comprova_ruta()
         return nou_estat
-
+    def recalcular_estat(self):
+        for furgo in self.ruta:
+            furgo.estacio_carrega.num_bicicletas_next -= furgo.carrega
+            try:
+                furgo.estacio_descarrega1.num_bicicletas_next += furgo.descarrega1
+            except:
+                pass
+            try:
+                furgo.estacio_descarrega2.num_bicicletas_next += furgo.descarrega2
+            except:
+                pass
     def h(self):
+        diners = 0
+        for est in self.estacions.lista_estaciones:
+            bicis_finals = 0
+            carrega = 0
+            descarrega1 = 0
+            descarrega2 = 0
+            for furgo in self.ruta:
+                if furgo.estacio_carrega == est:
+                    carrega = furgo.carrega
+                    '''if furgo.estacio_carrega.num_bicicletas_next - furgo.carrega < furgo.estacio_carrega.demanda:
+                        carrega += furgo.carrega'''
+                if furgo.estacio_descarrega1 == est:
+                    descarrega1 += furgo.descarrega1
+                if furgo.estacio_descarrega2 == est:
+                    descarrega2 += furgo.descarrega2
+            bicis_finals += descarrega1 + descarrega2 - carrega
+            
+            diners1=diners
+            print('\n\nDiners abans: ', diners1)
+            print(est.num_bicicletas_next, est.demanda, bicis_finals) 
+            if est.num_bicicletas_next > est.demanda:
+                if est.num_bicicletas_next + bicis_finals < est.demanda:
+                    diners -= abs(est.num_bicicletas_next + bicis_finals - est.demanda)
+            
+            elif est.num_bicicletas_next < est.demanda:
+                if est.num_bicicletas_next + bicis_finals > est.demanda:
+                    diners += abs(est.num_bicicletas_next + bicis_finals - est.demanda)
+                elif est.num_bicicletas_next + bicis_finals < est.demanda:
+                    diners += bicis_finals
+            if diners != diners1:
+                print('Diners despres: ', diners)
+                
+
+        diners -= sum(furgo.cost_gasolina() for furgo in self.ruta)
+        return diners
+    
+    def h2(self):
         cost_gasolina = sum(furgo.cost_gasolina() for furgo in self.ruta)
         guanys = sum(furgo.guanys() for furgo in self.ruta)
         perdues = sum(furgo.perdues() for furgo in self.ruta)
@@ -256,7 +305,7 @@ class Estat(object):
             print('DIFERENT')
         if nou_estat is self:
             print('ES')
-        return Estat(self.params, [furgo.__copy__() for furgo in self.ruta], self.estacions, set(self.estacions_de_carrega))
+        return nou_estat
 
     def __eq__(self, __value):
         return self.params == __value.params and self.ruta == __value.ruta and self.estacions == __value.estacions and  self.estacions_de_carrega == __value.estacions_de_carrega

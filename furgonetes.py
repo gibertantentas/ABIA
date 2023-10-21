@@ -64,6 +64,8 @@ class Furgonetes(object):
             possibles_guanys2 = (estacio_descarrega2.demanda - estacio_descarrega2.num_bicicletas_next) 
             guanys += min(descarrega2,  possibles_guanys2)
         return guanys  
+        #assegurar que dues furgos no tinguin guanys per deixar bicis en una estacio
+        
         
     
     def perdues(self):

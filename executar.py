@@ -67,8 +67,7 @@ n3 = hill_climbing(ProblemaBICING(estat_inicial2))
 time_end2 = time.time()
 total_time2 = time_end2 - time_start2
 print(f"\nEstat 3: \n  Inicial: {h_inicial3} euros Final: {n3.h()} euros")
-print('TEMPS:',total_time2)
-'''
+print('TEMPS:',total_time2)'''
       
       
       

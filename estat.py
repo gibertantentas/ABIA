@@ -60,10 +60,9 @@ class Estat(object):
             if self.ruta[num_furgo].estacio_descarrega1 is not None:
                 yield Descarrega_menys_bicicletes(num_furgo, 1)
                 yield Descarrega_mes_bicicletes(num_furgo, 1)
-                    
+                yield Eliminar_estacio_descarrega(num_furgo,1)
                 if self.ruta[num_furgo].estacio_descarrega2 is not None:
-                    yield Modificar_sentit_ruta(num_furgo)
-                    yield Eliminar_estacio_descarrega(num_furgo,1)
+                    #yield Modificar_sentit_ruta(num_furgo)
                     yield Eliminar_estacio_descarrega(num_furgo,2)
                     if self.ruta[num_furgo].descarrega1 > 0:
                         yield Intercanviar_bicicletes(num_furgo,2) #Estació 1 dóna a estació 2
@@ -104,7 +103,7 @@ class Estat(object):
                 nou_estat.estacions_de_carrega.remove(nou_estat.ruta[operador.num_furgo].estacio_carrega)
             nou_estat.ruta[operador.num_furgo].estacio_carrega = operador.est_nova
 
-        elif isinstance(operador, Nova_furgo):            
+        elif isinstance(operador, Nova_furgo):         
             carrega_max = 0
             for est in nou_estat.estacions.lista_estaciones:
                 if est not in nou_estat.estacions_de_carrega and est.num_bicicletas_no_usadas > carrega_max:
@@ -120,8 +119,6 @@ class Estat(object):
                         estacio_descarrega1 = est2
                 carrega = min(carrega, estacio_descarrega1.demanda - estacio_descarrega1.num_bicicletas_next) 
                 nou_estat.ruta.append(Furgonetes(estacio_carrega, carrega, estacio_descarrega1, carrega))
-                print(nou_estat.ruta)
-                print(nou_estat.h())
                 nou_estat.estacions_de_carrega.add(estacio_carrega)
             
               
@@ -271,8 +268,8 @@ class Estat(object):
             bicis_finals += descarrega1 + descarrega2 - carrega
             
             diners1=diners
-            print('\n\nDiners abans: ', diners1)
-            print(est.num_bicicletas_next, est.demanda, bicis_finals) 
+            #print('\n\nDiners abans: ', diners1)
+            #print(est.num_bicicletas_next, est.demanda, bicis_finals) 
             if est.num_bicicletas_next > est.demanda:
                 if est.num_bicicletas_next + bicis_finals < est.demanda:
                     diners -= abs(est.num_bicicletas_next + bicis_finals - est.demanda)
@@ -282,10 +279,10 @@ class Estat(object):
                     diners += abs(est.num_bicicletas_next + bicis_finals - est.demanda)
                 elif est.num_bicicletas_next + bicis_finals < est.demanda:
                     diners += bicis_finals
-            if diners != diners1:
-                print('Diners despres: ', diners)
+            #if diners != diners1:
+                #print('Diners despres: ', diners)
                 
-
+        
         diners -= sum(furgo.cost_gasolina() for furgo in self.ruta)
         return diners
     
@@ -322,8 +319,8 @@ def genera_estat_inicial0(params: Parametres, estacions: Estaciones) -> Estat:
         est_carrega = next(iterador_est)
         estacions_de_carrega.add(est_carrega)
         carrega = est_carrega.num_bicicletas_no_usadas
-        est_descarrega1 = next(iterador_est)
-        descarrega1 = carrega
+        '''est_descarrega1 = next(iterador_est)
+        descarrega1 = carrega'''
         ruta.append(Furgonetes(est_carrega, carrega))
 
 

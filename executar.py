@@ -41,15 +41,16 @@ estacions = Estaciones(params.n_estacions, params.n_bicis, params.llavor)
     print(f"\nEstat 1: \n  Inicial: {h_inicial1} euros Final: {n1.h()} euros")'''
     
 time_start1 = time.time()
-estat_inicial1 = genera_estat_inicial2(params, estacions) #Necessari executar per crear l'estat inicial
+estat_inicial1 = genera_estat_inicial1(params, estacions) #Necessari executar per crear l'estat inicial
 h_inicial2 = estat_inicial1.h()
 n2 = hill_climbing(ProblemaBICING(estat_inicial1))
 time_end1 = time.time()
 total_time1 = time_end1 - time_start1
 print(f"\nEstat 2: \n  Inicial: {h_inicial2} euros Final: {n2.h()} euros")
 print('TEMPS:',total_time1)
-
+print(len(n2.ruta))
 for furgo in n2.ruta:
+    print(furgo.estacio_carrega.coordX, furgo.estacio_carrega.coordY, '\n', furgo.estacio_descarrega1.coordX, furgo.estacio_descarrega1.coordY, '\n', furgo.estacio_descarrega2.coordX, furgo.estacio_descarrega2.coordY)
     print('ERROR' if furgo.estacio_carrega is furgo.estacio_descarrega1 or furgo.estacio_carrega is furgo.estacio_descarrega2 or furgo.estacio_descarrega1 is furgo.estacio_descarrega2 else '')
     print(furgo.carrega, furgo.descarrega1, furgo.descarrega2)
             
@@ -60,9 +61,9 @@ n3 = hill_climbing(ProblemaBICING(estat_inicial2))
 time_end2 = time.time()
 total_time2 = time_end2 - time_start2
 print(f"\nEstat 3: \n  Inicial: {h_inicial3} euros Final: {n3.h()} euros")
-print('TEMPS:',total_time2)'''
+print('TEMPS:',total_time2)
       
-visualitzar(estacions, n2)    
+visualitzar(estacions, n2)    '''
       
       
       

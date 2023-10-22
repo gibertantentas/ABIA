@@ -91,9 +91,15 @@ class Estat(object):
 
             
 
-    '''def comprova_ruta(self):
+    def comprova_ruta(self):
         for furgo in self.ruta:
-                if furgo.estacio_descarrega1 is None and furgo.descarrega1 != 0 or furgo.estacio_descarrega2 is None and furgo.descarrega2 != 0:
+                if furgo.descarrega1 == 0 and furgo.estacio_descarrega1 is not None:
+                    furgo.estacio_descarrega1 = None
+                
+                if furgo.descarrega2 == 0 and furgo.estacio_descarrega2 is not None:
+                    furgo.estacio_descarrega2 = None
+                
+                '''and furgo.descarrega1 != 0 or furgo.estacio_descarrega2 is None and furgo.descarrega2 != 0:
                     print(f'{furgo.estacio_descarrega1}  DESCARREGA {furgo.descarrega1}   i   {furgo.estacio_descarrega2} DESCARREGA {furgo.descarrega2}')'''
     def aplica_operador(self, operador: Operador):
         nou_estat = self.copia()
@@ -103,8 +109,52 @@ class Estat(object):
                 nou_estat.estacions_de_carrega.remove(nou_estat.ruta[operador.num_furgo].estacio_carrega)
             nou_estat.ruta[operador.num_furgo].estacio_carrega = operador.est_nova
 
-        elif isinstance(operador, Nova_furgo):         
-            carrega_max = 0
+        elif isinstance(operador, Nova_furgo):        
+            estacio_carrega, est_descarrega_propera, est_descarrega_propera2 = None, None, None
+            carrega, descarrega1, descarrega2 = 0,0,0
+            llista_ordenada = sorted(nou_estat.estacions.lista_estaciones, key=lambda x: min(x.num_bicicletas_no_usadas, max(0,x.num_bicicletas_next-x.demanda)), reverse=True)
+            for i in llista_ordenada:
+                if i not in nou_estat.estacions_de_carrega:
+                    estacio_carrega = i
+                    break
+
+            if estacio_carrega in llista_ordenada:
+                llista_ordenada.remove(estacio_carrega)
+
+
+            if estacio_carrega:  
+                carrega = min(estacio_carrega.num_bicicletas_no_usadas, 30)              
+                distancia_minima, est_descarrega_propera = float('inf'), None
+                
+                for est in llista_ordenada:
+                        if est.num_bicicletas_next - est.demanda < 0:
+                            distancia = distancia_estacions(estacio_carrega, est)
+                            if distancia < distancia_minima:
+                                distancia_minima, est_descarrega_propera = distancia, est
+
+            if est_descarrega_propera in llista_ordenada:
+                llista_ordenada.remove(est_descarrega_propera)         
+
+            if est_descarrega_propera:     
+                diferencia = est_descarrega_propera.num_bicicletas_next - est_descarrega_propera.demanda
+                descarrega1 = min(abs(diferencia), carrega)           
+                distancia_minima2, est_descarrega_propera2 = float('inf'), None
+                
+                for est_des in llista_ordenada:
+                        if est_des.num_bicicletas_next - est_des.demanda < 0:
+                            distancia = distancia_estacions(est_descarrega_propera, est_des)
+                            if distancia < distancia_minima2:
+                                distancia_minima2, est_descarrega_propera2 = distancia, est_des
+           
+            if est_descarrega_propera2:
+                descarrega2 = min((carrega - descarrega1), carrega)
+            else:
+                carrega = descarrega1   
+            #carrega = min(carrega, estacio_descarrega.demanda - estacio_descarrega.num_bicicletas_next) 
+            nou_estat.ruta.append(Furgonetes(estacio_carrega, carrega, est_descarrega_propera, descarrega1, est_descarrega_propera2, descarrega2))
+            nou_estat.estacions_de_carrega.add(estacio_carrega)
+             
+            '''carrega_max = 0
             for est in nou_estat.estacions.lista_estaciones:
                 if est not in nou_estat.estacions_de_carrega and est.num_bicicletas_no_usadas > carrega_max:
                     estacio_carrega = est
@@ -119,7 +169,7 @@ class Estat(object):
                         estacio_descarrega1 = est2
                 carrega = min(carrega, estacio_descarrega1.demanda - estacio_descarrega1.num_bicicletas_next) 
                 nou_estat.ruta.append(Furgonetes(estacio_carrega, carrega, estacio_descarrega1, carrega))
-                nou_estat.estacions_de_carrega.add(estacio_carrega)
+                nou_estat.estacions_de_carrega.add(estacio_carrega)'''
             
               
 
@@ -236,7 +286,7 @@ class Estat(object):
             elif operador.est == 1:
                 nou_estat.ruta[operador.num_furgo].descarrega2 -= 1
                 nou_estat.ruta[operador.num_furgo].descarrega1 += 1
-        #nou_estat.comprova_ruta()
+        nou_estat.comprova_ruta()
         return nou_estat
     def recalcular_estat(self):
         for furgo in self.ruta:
@@ -267,18 +317,25 @@ class Estat(object):
                     descarrega2 += furgo.descarrega2
             bicis_finals += descarrega1 + descarrega2 - carrega
             
-            diners1=diners
+            #diners1=diners
             #print('\n\nDiners abans: ', diners1)
             #print(est.num_bicicletas_next, est.demanda, bicis_finals) 
+            #next:5 | finals:-3  | demanda:5
             if est.num_bicicletas_next > est.demanda:
                 if est.num_bicicletas_next + bicis_finals < est.demanda:
                     diners -= abs(est.num_bicicletas_next + bicis_finals - est.demanda)
             
+            #next:4 | finals:3  | demanda:5
             elif est.num_bicicletas_next < est.demanda:
                 if est.num_bicicletas_next + bicis_finals > est.demanda:
-                    diners += abs(est.num_bicicletas_next + bicis_finals - est.demanda)
+                    #diners += abs(est.num_bicicletas_next + bicis_finals - est.demanda)
+                    diners += abs(est.demanda - est.num_bicicletas_next)
                 elif est.num_bicicletas_next + bicis_finals < est.demanda:
                     diners += bicis_finals
+                    
+            elif est.num_bicicletas_next == est.demanda:
+                if est.num_bicicletas_next + bicis_finals < est.demanda:
+                    diners -= bicis_finals
             #if diners != diners1:
                 #print('Diners despres: ', diners)
                 
@@ -329,6 +386,57 @@ def genera_estat_inicial0(params: Parametres, estacions: Estaciones) -> Estat:
 
 def genera_estat_inicial2(params: Parametres, estaciones: Estaciones) -> Estat:
     ruta = []
+    est_carrega, est_descarrega_propera, est_descarrega_propera2 = None, None, None
+    carrega, descarrega, descarrega2 = 0,0,0
+    llista_ordenada = sorted(estaciones.lista_estaciones, key=lambda x: min(x.num_bicicletas_no_usadas, max(0,x.num_bicicletas_next-x.demanda)), reverse=True)
+    estacions_carrega = llista_ordenada[0:params.n_furgonetes]
+    estacions_descarrega = llista_ordenada[params.n_furgonetes:]
+
+    for est_carrega in estacions_carrega:
+        distancia_minima, est_descarrega_propera = float('inf'), None
+        distancia_minima2, est_descarrega2_propera = float('inf'), None
+
+        carrega = min(est_carrega.num_bicicletas_no_usadas, 30)#, max(0,est_carrega.num_bicicletas_next-est_carrega.demanda))
+        for est_descarrega in estacions_descarrega:
+            if est_descarrega.num_bicicletas_next - est_descarrega.demanda < 0:
+                distancia = distancia_estacions(est_carrega, est_descarrega)
+                if distancia < distancia_minima:
+                    distancia_minima, est_descarrega_propera = distancia, est_descarrega
+            else: estacions_descarrega.remove(est_descarrega)
+              
+        if est_descarrega_propera in estacions_descarrega:
+            estacions_descarrega.remove(est_descarrega_propera) 
+
+        if est_descarrega_propera:     
+            diferencia = est_descarrega_propera.num_bicicletas_next - est_descarrega_propera.demanda
+            descarrega = min(abs(diferencia), carrega)           
+            
+            if descarrega < 30:
+                distancia_minima2, est_descarrega_propera2 = float('inf'), None
+                for est_descarrega2 in estacions_descarrega: 
+                    distancia2 = distancia_estacions(est_descarrega_propera, est_descarrega2)
+                    if est_descarrega.num_bicicletas_next - est_descarrega.demanda < 0:
+                        if distancia2 < distancia_minima2:
+                            distancia_minima2, est_descarrega2_propera = distancia2, est_descarrega2
+                    else: estacions_descarrega.remove(est_descarrega)
+                if est_descarrega2_propera in estacions_descarrega:
+                    estacions_descarrega.remove(est_descarrega2_propera)
+            
+        if est_descarrega_propera2:
+            descarrega2 = carrega - descarrega
+        else: 
+            carrega = descarrega
+
+        if est_carrega and est_descarrega_propera:       
+            ruta.append(Furgonetes(est_carrega, carrega, est_descarrega_propera, descarrega, est_descarrega2_propera, descarrega2))
+
+    estat =Estat(params, ruta, estaciones, set(estacions_carrega))
+    for furgo in estat.ruta:
+        print(furgo.carrega, furgo.descarrega1, furgo.descarrega2)
+    return estat 
+    return Estat(params, ruta, estaciones, set(estacions_carrega))
+
+    '''ruta = []
     llista_ordenada = sorted(estaciones.lista_estaciones, key=lambda x: min(x.num_bicicletas_no_usadas, max(0,x.num_bicicletas_next-x.demanda)), reverse=True)
     estacions_carrega = llista_ordenada[0:params.n_furgonetes]
     estacions_descarrega = llista_ordenada[params.n_furgonetes:]
@@ -364,7 +472,7 @@ def genera_estat_inicial2(params: Parametres, estaciones: Estaciones) -> Estat:
                 descarrega2 = min((carrega - descarrega), carrega)
                 
             ruta.append(Furgonetes(est_carrega, carrega, est_descarrega_propera, descarrega, est_descarrega2_propera, descarrega2))
-    return Estat(params, ruta, estaciones, set(estacions_carrega))
+    return Estat(params, ruta, estaciones, set(estacions_carrega))'''
 
 
 

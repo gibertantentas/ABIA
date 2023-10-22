@@ -40,7 +40,7 @@ estacions = Estaciones(params.n_estacions, params.n_bicis, params.llavor)
     print(f"\nEstat 1: \n  Inicial: {h_inicial1} euros Final: {n1.h()} euros")'''
     
 time_start1 = time.time()
-estat_inicial1 = genera_estat_inicial1(params, estacions) #Necessari executar per crear l'estat inicial
+estat_inicial1 = genera_estat_inicial2(params, estacions) #Necessari executar per crear l'estat inicial
 h_inicial2 = estat_inicial1.h()
 n2 = hill_climbing(ProblemaBICING(estat_inicial1))
 time_end1 = time.time()
@@ -87,8 +87,8 @@ print('TEMPS:',total_time2)'''
       
       
       
-        
-'''import matplotlib.pyplot as plt
+'''      
+import matplotlib.pyplot as plt
 
 # Supongamos que tienes una instancia de la clase Estaciones llamada 'estacions'
 
@@ -117,7 +117,7 @@ plt.show()
 
 #########
 
-
+'''
 import matplotlib.pyplot as plt
 
 # Supongamos que tienes una instancia de la clase Estaciones llamada 'estacions'
@@ -158,4 +158,3 @@ for furgoneta in n2.ruta:
 plt.legend()
 plt.grid()
 plt.show()
-'''

@@ -3,6 +3,7 @@ from parametres import Parametres
 from estat import genera_estat_inicial1, genera_estat_inicial2, genera_estat_inicial0
 from aima.search import hill_climbing, simulated_annealing
 from Problema import ProblemaBICING
+from visual import visualitzar
 import random
 import time
 
@@ -49,16 +50,8 @@ print(f"\nEstat 2: \n  Inicial: {h_inicial2} euros Final: {n2.h()} euros")
 print('TEMPS:',total_time1)
 
 for furgo in n2.ruta:
+    print('ERROR' if furgo.estacio_carrega is furgo.estacio_descarrega1 or furgo.estacio_carrega is furgo.estacio_descarrega2 or furgo.estacio_descarrega1 is furgo.estacio_descarrega2 else '')
     print(furgo.carrega, furgo.descarrega1, furgo.descarrega2)
-'''for furgo in n2.ruta:
-    try:
-        print('\n\nFurgo: ',furgo.estacio_carrega.coordX, furgo.estacio_carrega.coordY, '\n', furgo.estacio_descarrega1.coordX, furgo.estacio_descarrega1.coordY, '\nDescarrega2', furgo.estacio_descarrega2.coordX, furgo.estacio_descarrega2.coordY)
-    except:
-        try:
-            print('\n\nFurgo: ',furgo.estacio_carrega.coordX, furgo.estacio_carrega.coordY, '\n', furgo.estacio_descarrega1.coordX, furgo.estacio_descarrega1.coordY)
-        except:
-            pass'''
-        
             
 '''time_start2 = time.time()
 estat_inicial2 = genera_estat_inicial2(params, estacions) #Necessari executar per crear l'estat inicial
@@ -69,56 +62,19 @@ total_time2 = time_end2 - time_start2
 print(f"\nEstat 3: \n  Inicial: {h_inicial3} euros Final: {n3.h()} euros")
 print('TEMPS:',total_time2)'''
       
+visualitzar(estacions, n2)    
       
       
       
       
       
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-'''      
-import matplotlib.pyplot as plt
 
-# Supongamos que tienes una instancia de la clase Estaciones llamada 'estacions'
-
-# Extrae las coordenadas de las estaciones
-coordX = [estacion.coordX for estacion in estacions.lista_estaciones]
-coordY = [estacion.coordY for estacion in estacions.lista_estaciones]
-
-# Crea un gráfico de dispersión para mostrar las estaciones en el mapa
-plt.figure(figsize=(8, 8))  # Ajusta el tamaño del gráfico según tus preferencias
-plt.scatter(coordX, coordY, label="Estaciones", color="blue")
-
-# Personaliza el gráfico (etiquetas, título, ejes, etc.)
-plt.xlabel("Coordenada X")
-plt.ylabel("Coordenada Y")
-plt.title("Mapa de Estaciones")
-
-# Agrega etiquetas a las estaciones
-for i, estacion in enumerate(estacions.lista_estaciones):
-    plt.text(coordX[i], coordY[i], f"Estacion {i+1}", fontsize=8, ha='center', va='bottom')
-
-# Muestra el gráfico
-plt.legend()
-plt.grid()
-plt.show()
-
-
-#########
-
-'''
-import matplotlib.pyplot as plt
+      
+      
+      
+      
+      
+'''import matplotlib.pyplot as plt
 
 # Supongamos que tienes una instancia de la clase Estaciones llamada 'estacions'
 # y una instancia de la clase Estat llamada 'n2'
@@ -158,3 +114,4 @@ for furgoneta in n2.ruta:
 plt.legend()
 plt.grid()
 plt.show()
+'''

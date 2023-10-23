@@ -30,8 +30,10 @@ print(f"Temps de cerca: {round(total_time * 1000, 2)} ms")'''
 
 
 
-#42
-params = Parametres(25, 1250, 42, 5, 30)
+s = 42
+#s = random.randint(2,5000)
+print(s)
+params = Parametres(25, 1250, s, 5, 30)
 estacions = Estaciones(params.n_estacions, params.n_bicis, params.llavor)
 
 '''if estat_inici == '0':
@@ -41,18 +43,29 @@ estacions = Estaciones(params.n_estacions, params.n_bicis, params.llavor)
     print(f"\nEstat 1: \n  Inicial: {h_inicial1} euros Final: {n1.h()} euros")'''
     
 time_start1 = time.time()
-estat_inicial1 = genera_estat_inicial1(params, estacions) #Necessari executar per crear l'estat inicial
+estat_inicial1 = genera_estat_inicial2(params, estacions) #Necessari executar per crear l'estat inicial
 h_inicial2 = estat_inicial1.h()
 n2 = hill_climbing(ProblemaBICING(estat_inicial1))
 time_end1 = time.time()
 total_time1 = time_end1 - time_start1
-print(f"\nEstat 2: \n  Inicial: {h_inicial2} euros Final: {n2.h()} euros")
+print('Heurística final:',n2.h())
+'''print(f"\nEstat 2: \n  Inicial: {h_inicial2} euros Final: {n2.h()} euros")
 print('TEMPS:',total_time1)
 print(len(n2.ruta))
 for furgo in n2.ruta:
-    print(furgo.estacio_carrega.coordX, furgo.estacio_carrega.coordY, '\n', furgo.estacio_descarrega1.coordX, furgo.estacio_descarrega1.coordY, '\n', furgo.estacio_descarrega2.coordX, furgo.estacio_descarrega2.coordY)
+    try:
+        print(furgo.estacio_carrega.coordX, furgo.estacio_carrega.coordY, '\n', furgo.estacio_descarrega1.coordX, furgo.estacio_descarrega1.coordY, '\n', furgo.estacio_descarrega2.coordX, furgo.estacio_descarrega2.coordY)
+        
+    except:
+        print(furgo.estacio_carrega.coordX, furgo.estacio_carrega.coordY, '\n', furgo.estacio_descarrega1.coordX, furgo.estacio_descarrega1.coordY)
     print('ERROR' if furgo.estacio_carrega is furgo.estacio_descarrega1 or furgo.estacio_carrega is furgo.estacio_descarrega2 or furgo.estacio_descarrega1 is furgo.estacio_descarrega2 else '')
-    print(furgo.carrega, furgo.descarrega1, furgo.descarrega2)
+    print(furgo.carrega, furgo.descarrega1, furgo.descarrega2)'''
+            
+            
+            
+            
+            
+            
             
 '''time_start2 = time.time()
 estat_inicial2 = genera_estat_inicial2(params, estacions) #Necessari executar per crear l'estat inicial

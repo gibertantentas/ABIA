@@ -4,6 +4,7 @@ from parametres import Parametres
 from furgonetes import Furgonetes
 from operadors import *
 from visual import visualitzar
+import pdb
 
 
 comptador = 0
@@ -107,6 +108,7 @@ class Estat(object):
             if nou_estat.ruta[operador.num_furgo].estacio_carrega in nou_estat.estacions_de_carrega:
                 nou_estat.estacions_de_carrega.remove(nou_estat.ruta[operador.num_furgo].estacio_carrega)
             nou_estat.ruta[operador.num_furgo].estacio_carrega = operador.est_nova
+        
 
         elif isinstance(operador, Nova_furgo):        
             estacio_carrega, est_descarrega_propera, est_descarrega_propera2 = None, None, None
@@ -151,7 +153,7 @@ class Estat(object):
                 carrega = descarrega1   
             #carrega = min(carrega, estacio_descarrega.demanda - estacio_descarrega.num_bicicletas_next) 
             nou_estat.ruta.append(Furgonetes(estacio_carrega, carrega, est_descarrega_propera, descarrega1, est_descarrega_propera2, descarrega2))
-            nou_estat.estacions_de_carrega.add(estacio_carrega)              
+            nou_estat.estacions_de_carrega.add(estacio_carrega)
 
 
 
@@ -165,7 +167,8 @@ class Estat(object):
             
                    
         elif isinstance(operador, Intercanviar_estacions):
-            if operador.est_intercanvi1 == 0 and operador.est_intercanvi2 == 0:
+            pass
+            '''if operador.est_intercanvi1 == 0 and operador.est_intercanvi2 == 0:
                 nou_estat.ruta[operador.num_furgo1].estacio_carrega, nou_estat.ruta[operador.num_furgo2].estacio_carrega = nou_estat.ruta[operador.num_furgo2].estacio_carrega, nou_estat.ruta[operador.num_furgo1].estacio_carrega
             
             elif operador.est_intercanvi1 == 0 and operador.est_intercanvi2 == 1:
@@ -191,7 +194,7 @@ class Estat(object):
             
             elif operador.est_intercanvi1 == 2 and operador.est_intercanvi2 == 2:
                 nou_estat.ruta[operador.num_furgo1].estacio_descarrega2, nou_estat.ruta[operador.num_furgo2].estacio_descarrega2 = nou_estat.ruta[operador.num_furgo2].estacio_descarrega2, nou_estat.ruta[operador.num_furgo1].estacio_descarrega2
-           
+           '''
             '''elif isinstance(operador, Carrega_menys_bicicletes):
             nou_estat.ruta[operador.num_furgo].carrega -= 1'''
         
@@ -200,6 +203,7 @@ class Estat(object):
             furgo = nou_estat.ruta[operador.num_furgo]
             furgo.estacio_descarrega1, furgo.estacio_descarrega2 = furgo.estacio_descarrega2, furgo.estacio_descarrega1
             furgo.descarrega1, furgo.descarrega2 = furgo.descarrega2, furgo.descarrega1
+            
         
         elif isinstance(operador, Eliminar_estacio_descarrega):
             furgo = nou_estat.ruta[operador.num_furgo]
@@ -211,7 +215,7 @@ class Estat(object):
                 furgo.estacio_descarrega2 = None
                 furgo.carrega -= furgo.descarrega2
                 furgo.descarrega2 = 0
-        
+
         elif isinstance(operador, Descarrega_mes_bicicletes):
             furgo = nou_estat.ruta[operador.num_furgo]
             if operador.estacio_descarrega == 1:
@@ -226,6 +230,8 @@ class Estat(object):
                 #n_bicis = 30 - furgo.carrega
                 furgo.descarrega2 += n_bicis
                 furgo.carrega += n_bicis
+            
+
             
 
         elif isinstance(operador, Descarrega_menys_bicicletes):
@@ -247,6 +253,7 @@ class Estat(object):
                     #furgo.carrega -= bicis_a_treure
                     furgo.descarrega1 -= 1
                     furgo.carrega -= 1
+
             
         elif isinstance(operador, Descarrega_en_nova_estacio):
             
@@ -259,13 +266,15 @@ class Estat(object):
                     n_bicis = 30 - nou_estat.ruta[operador.num_furgo].carrega
                     furgo.descarrega1 = n_bicis
                     furgo.carrega += n_bicis
-                elif furgo.estacio_descarrega2 is None and furgo.estacio_descarrega1 is not operador.estacio_descarrega:
+                elif furgo.estacio_descarrega1 is not None and furgo.estacio_descarrega2 is None and furgo.estacio_descarrega1 is not operador.estacio_descarrega:
                     furgo.estacio_descarrega2 = operador.estacio_descarrega
                     #bicis_necessaries = furgo.estacio_descarrega2.demanda - furgo.estacio_descarrega2.num_bicicletas_next if furgo.estacio_descarrega2.demanda > furgo.estacio_descarrega2.num_bicicletas_next else 0
                     #n_bicis = min(bicis_necessaries ,30 - nou_estat.ruta[operador.num_furgo].carrega)
-                    n_bicis = 30 - nou_estat.ruta[operador.num_furgo].carrega
+                    n_bicis = 30 - nou_estat.ruta[operador.num_furgo].carrega - nou_estat.ruta[operador.num_furgo].descarrega1
                     furgo.descarrega2 = n_bicis
                     furgo.carrega += n_bicis
+            
+
 
         elif isinstance(operador, Intercanviar_bicicletes):
             if operador.est == 2:
@@ -274,13 +283,15 @@ class Estat(object):
             elif operador.est == 1:
                 nou_estat.ruta[operador.num_furgo].descarrega2 -= 1
                 nou_estat.ruta[operador.num_furgo].descarrega1 += 1
+            
+
 
         for furgo in nou_estat.ruta:
-                if furgo.descarrega1 == 0 and furgo.estacio_descarrega1 is not None:
-                    furgo.estacio_descarrega1 = None
+            if furgo.descarrega1 == 0 and furgo.estacio_descarrega1 is not None:
+                furgo.estacio_descarrega1 = None
                 
-                if furgo.descarrega2 == 0 and furgo.estacio_descarrega2 is not None:
-                    furgo.estacio_descarrega2 = None    
+            if furgo.descarrega2 == 0 and furgo.estacio_descarrega2 is not None:
+                furgo.estacio_descarrega2 = None
         return nou_estat
     def recalcular_estat(self):
         for furgo in self.ruta:
@@ -293,7 +304,7 @@ class Estat(object):
                 furgo.estacio_descarrega2.num_bicicletas_next += furgo.descarrega2
             except:
                 pass
-    def h(self):
+    def h_malament(self):
         diners = 0
         for est in self.estacions.lista_estaciones:
             bicis_finals = 0
@@ -323,6 +334,63 @@ class Estat(object):
             elif est.num_bicicletas_next == est.demanda:
                 if est.num_bicicletas_next + bicis_finals < est.demanda:
                     diners -= bicis_finals
+        
+        diners -= sum(furgo.cost_gasolina() for furgo in self.ruta)
+        return diners
+    
+     
+    def h(self):
+        diners = 0
+        for est in self.estacions.lista_estaciones:
+            bicis_finals = 0
+            carrega = 0
+            descarrega1 = 0
+            descarrega2 = 0
+            compt = 0
+            for furgo in self.ruta:
+                if est is furgo.estacio_carrega:
+                    carrega = furgo.carrega
+                    if compt == 1:
+                        print('\nERROR', furgo.estacio_carrega.coordX, furgo.estacio_carrega.coordY, furgo.estacio_descarrega1.coordX, furgo.estacio_descarrega1.coordY)
+                        print(vari)
+                    compt += 1
+                    '''if furgo.estacio_carrega.num_bicicletas_next - furgo.carrega < furgo.estacio_carrega.demanda:
+                        carrega += furgo.carrega'''
+                elif est is furgo.estacio_descarrega1:
+                    descarrega1 += furgo.descarrega1
+                elif est is furgo.estacio_descarrega2:
+                    descarrega2 += furgo.descarrega2
+                try:
+                    vari = (furgo.estacio_carrega.coordX, furgo.estacio_carrega.coordY, furgo.estacio_descarrega1.coordX, furgo.estacio_descarrega1.coordY)
+                except:
+                    vari = (furgo.estacio_carrega.coordX, furgo.estacio_carrega.coordY)
+            
+            bicis_finals += descarrega1 + descarrega2 - carrega
+            
+            diferencia = est.num_bicicletas_next - est.demanda
+            
+            if diferencia > 0:
+                if diferencia + bicis_finals < 0:
+                    diners -= abs(diferencia - bicis_finals)
+            elif diferencia < 0:
+                if diferencia + bicis_finals < 0:
+                    diners += bicis_finals
+                elif diferencia + bicis_finals > 0:
+                    diners += abs(diferencia + bicis_finals)
+            
+            '''if est.num_bicicletas_next > est.demanda:
+                if est.num_bicicletas_next + bicis_finals < est.demanda:
+                    diners -= abs(est.num_bicicletas_next + bicis_finals - est.demanda)
+            
+            elif est.num_bicicletas_next < est.demanda:
+                if est.num_bicicletas_next + bicis_finals > est.demanda:
+                    diners += abs(est.demanda - est.num_bicicletas_next)
+                elif est.num_bicicletas_next + bicis_finals < est.demanda:
+                    diners += bicis_finals
+                    
+            elif est.num_bicicletas_next == est.demanda:
+                if est.num_bicicletas_next + bicis_finals < est.demanda:
+                    diners -= bicis_finals'''
         
         diners -= sum(furgo.cost_gasolina() for furgo in self.ruta)
         return diners
@@ -369,6 +437,8 @@ def genera_estat_inicial0(params: Parametres, estacions: Estaciones) -> Estat:
 
 
 def genera_estat_inicial2(params: Parametres, estacions: Estaciones) -> Estat:
+    '''bicis_no_usades = est.num_bicicletas_no_usadas
+    bicis_carregables = est.num_bicicletas_next - est.demanda'''
     possibles_furgos = []
     estacions_descarrega = set(estacions.lista_estaciones)
     for est_carrega in estacions.lista_estaciones:
@@ -431,10 +501,14 @@ def genera_estat_inicial2(params: Parametres, estacions: Estaciones) -> Estat:
         
     estat = Estat(params, ruta_optima, estacions, set(estacions_carrega))
     for furgo in estat.ruta:
-        print(furgo.carrega, furgo.descarrega1, furgo.descarrega2)
+        '''print(furgo.carrega, furgo.descarrega1, furgo.descarrega2)
         print(furgo.estacio_carrega.num_bicicletas_next - furgo.estacio_carrega.demanda, furgo.estacio_descarrega1.num_bicicletas_next - furgo.estacio_descarrega1.demanda)
-        print(distancia_estacions(furgo.estacio_carrega, furgo.estacio_descarrega1))
-        print('ERROR' if furgo.estacio_carrega is furgo.estacio_descarrega1 or furgo.estacio_carrega is furgo.estacio_descarrega2 or furgo.estacio_descarrega1 is furgo.estacio_descarrega2 else '')
+        print(distancia_estacions(furgo.estacio_carrega, furgo.estacio_descarrega1))'''
+        try:
+            print(furgo.estacio_carrega.coordX, furgo.estacio_carrega.coordY, '\n', furgo.estacio_descarrega1.coordX, furgo.estacio_descarrega1.coordY, '\n', furgo.estacio_descarrega2.coordX, furgo.estacio_descarrega2.coordY)
+        except:
+            print(furgo.estacio_carrega.coordX, furgo.estacio_carrega.coordY, '\n', furgo.estacio_descarrega1.coordX, furgo.estacio_descarrega1.coordY)
+        print('ERROR' if furgo.estacio_carrega is furgo.estacio_descarrega1 or furgo.estacio_carrega is furgo.estacio_descarrega2 or furgo.estacio_descarrega1 is furgo.estacio_descarrega2 else 'tot be')
     print('heuristica',estat.h())
     #visualitzar(estacions,estat)
     return estat
@@ -474,10 +548,10 @@ def genera_estat_inicial__(params: Parametres, estaciones: Estaciones) -> Estat:
         if est_carrega and est_descarrega_propera:       
             ruta.append(Furgonetes(est_carrega, carrega, est_descarrega_propera, descarrega, est_descarrega2_propera, descarrega2))
 
-    estat =Estat(params, ruta, estaciones, set(estacions_carrega))
+    '''estat =Estat(params, ruta, estaciones, set(estacions_carrega))
     for furgo in estat.ruta:
         print(furgo.carrega, furgo.descarrega1, furgo.descarrega2)
-    return estat 
+    return estat '''
     return Estat(params, ruta, estaciones, set(estacions_carrega))
 
     

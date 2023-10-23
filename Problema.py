@@ -3,6 +3,8 @@ from typing import Generator
 from aima.search import Problem
 from operadors import Operador
 from estat import Estat
+import pdb
+from visual import visualitzar
 
 
 class ProblemaBICING(Problem):
@@ -14,6 +16,11 @@ class ProblemaBICING(Problem):
         return state.genera_accions()
 
     def result(self, state: Estat, action: Operador) -> Estat:
+        #pdb.set_trace()
+        #estat = state.aplica_operador(action)
+        #visualitzar(state.estacions,state)
+        
+        #return estat
         #print(action)
         '''try:
             furgo = state.ruta[action.num_furgo]

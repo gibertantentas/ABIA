@@ -14,10 +14,10 @@ class Furgonetes(object):
         self.descarrega1: int = descarrega1
         self.descarrega2: int = descarrega2
         #assert (self.carrega == self.descarrega1 + self.descarrega2)
-        if est_descarrega1 is None:
+        '''if est_descarrega1 is None:
             assert (descarrega1 == 0)
         if est_descarrega2 is None:
-            assert (descarrega2 == 0)
+            assert (descarrega2 == 0)'''
     
     def cost_gasolina(self):
         cost_total = 0
